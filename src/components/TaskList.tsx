@@ -8,9 +8,10 @@ interface TaskListProps {
     onDelete: (id: number) => void;
     onComplete: (id: number) => void;
     onEdit: (task: Task) => void;
+    onTasksUpdate: (tasks: Task[]) => void;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, currentGroup, onDelete, onComplete, onEdit }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, currentGroup, onDelete, onComplete, onEdit, onTasksUpdate }) => {
     const filteredTasks = tasks.filter(task => {
         if (currentGroup === "__ALL__") return true;
         if (currentGroup === "__NO_GROUP__") return !task.group;
@@ -29,6 +30,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, currentGroup, onDelete, onCo
                     onDelete={onDelete}
                     onComplete={onComplete}
                     onEdit={onEdit}
+                    onTasksUpdate={onTasksUpdate}
                 />
             ))}
         </div>

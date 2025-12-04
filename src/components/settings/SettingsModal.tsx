@@ -130,6 +130,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                             { value: "nord", label: "Nord" },
                             { value: "dracula", label: "Dracula" },
                             { value: "monokai", label: "Monokai" },
+                            { value: "monokai-dimmed", label: "Monokai Dimmed" },
                             { value: "gruvbox", label: "Gruvbox" },
                             { value: "solarized-dark", label: "Solarized Dark" },
                         ]}

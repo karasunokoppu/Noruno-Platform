@@ -9,6 +9,24 @@ import CalendarView from "./components/CalendarView";
 import SettingsModal from "./components/settings";
 import MemoView from "./components/memo";
 import ReadingMemoView from "./components/reading";
+import DashboardView from "./components/dashboard";
+
+// Reading Book interface for dashboard
+interface ReadingBook {
+  id: string;
+  title: string;
+  status: string;
+  reading_sessions: {
+    duration_minutes?: number;
+    pages_read: number;
+  }[];
+}
+
+export interface Subtask {
+  id: number;
+  description: string;
+  completed: boolean;
+}
 
 export interface Task {
   id: number;
@@ -18,6 +36,7 @@ export interface Task {
   details: string;
   completed: boolean;
   notification_minutes?: number;
+  subtasks: Subtask[];
 }
 
 function App() {
@@ -27,6 +46,7 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [theme, setTheme] = useState<string>("dark");
   const [showSettings, setShowSettings] = useState(false);
+  const [readingBooks, setReadingBooks] = useState<ReadingBook[]>([]);
 
   useEffect(() => {
     refreshData();
@@ -39,8 +59,10 @@ function App() {
   async function refreshData() {
     const loadedTasks = await invoke<Task[]>("get_tasks");
     const loadedGroups = await invoke<string[]>("get_groups");
+    const loadedBooks = await invoke<ReadingBook[]>("get_reading_books");
     setTasks(loadedTasks);
     setGroups(loadedGroups);
+    setReadingBooks(loadedBooks);
   }
 
   const handleAddTask = async (desc: string, date: string, group: string, details: string, notificationMinutes?: number) => {
@@ -109,7 +131,9 @@ function App() {
       </div>
 
       <div className="main-content">
-        {currentGroup === "__CALENDAR__" ? (
+        {currentGroup === "__DASHBOARD__" ? (
+          <DashboardView tasks={tasks} readingBooks={readingBooks} />
+        ) : currentGroup === "__CALENDAR__" ? (
           <CalendarView tasks={tasks} groups={groups} onEdit={setEditingTask} />
         ) : currentGroup === "__MEMOS__" ? (
           <MemoView />
@@ -128,6 +152,7 @@ function App() {
                 onDelete={handleDeleteTask}
                 onComplete={handleCompleteTask}
                 onEdit={setEditingTask}
+                onTasksUpdate={setTasks}
               />
             </div>
           </>

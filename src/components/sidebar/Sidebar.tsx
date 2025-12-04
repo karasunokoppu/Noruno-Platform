@@ -43,6 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ tasks, groups, currentGroup, onSelect
     return (
         <div className="sidebar">
             <div className={`sidebar-item ${currentGroup === "__ALL__" ? "active" : ""}`} onClick={() => onSelectGroup("__ALL__")}>📋 All Tasks</div>
+            <div className={`sidebar-item ${currentGroup === "__DASHBOARD__" ? "active" : ""}`} onClick={() => onSelectGroup("__DASHBOARD__")}>📊 Dashboard</div>
             <div className={`sidebar-item ${currentGroup === "__CALENDAR__" ? "active" : ""}`} onClick={() => onSelectGroup("__CALENDAR__")}>📅 Calendar</div>
             <div className={`sidebar-item ${currentGroup === "__MEMOS__" ? "active" : ""}`} onClick={() => onSelectGroup("__MEMOS__")}>📝 Memos</div>
             <div className={`sidebar-item ${currentGroup === "__READING_MEMOS__" ? "active" : ""}`} onClick={() => onSelectGroup("__READING_MEMOS__")}>📚 Reading Memos</div>
