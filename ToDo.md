@@ -6,12 +6,7 @@
 - [x] テーマのバリエーションを直す
 - [x] 読書メモ機能を実装
 - [ ] タスクグループにも詳細メモを残せるように
-- [ ] UI        : shadcn/ui + Tailwind
 - [ ] 状態管理  : Zustand
-- [ ] データ保存: Tauri (SQLite or JSON)
-- [ ] エディタ  : シンプルな textarea → 後で拡張可
-- [ ] 通信     : @tauri-apps/api (invoke)
-- [ ] Taur plugin (Single Instance)を使ってみる。(アプリを同時に一つだけ実行する用制限する)
 
 # 確認事項
 
