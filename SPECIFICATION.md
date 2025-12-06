@@ -11,7 +11,7 @@
 | カテゴリ | 技術 |
 |---------|------|
 | フレームワーク | Tauri v2 |
-| フロントエンド | React + TypeScript + Vite |
+| フロントエンド | React + TypeScript + Vite + Tailwind CSS |
 | バックエンド | Rust |
 | データ保存 | JSON ファイル（ローカル） |
 | 通知 | Gmail SMTP (lettre) |
@@ -32,6 +32,10 @@
 | react-markdown | ^10.1.0 | Markdownレンダリング |
 | react-syntax-highlighter | ^16.1.0 | コードブロックのシンタックスハイライト |
 | remark-gfm | ^4.0.1 | GitHub Flavored Markdown対応 |
+| tailwindcss | ^4.0.0 | CSSフレームワーク |
+| @tailwindcss/postcss | ^4.0.0 | PostCSSプラグイン |
+| postcss | ^8.4.49 | CSS変換ツール |
+| autoprefixer | ^10.4.20 | ベンダープレフィックス付与 |
 
 #### 開発依存関係
 
@@ -137,8 +141,14 @@
 ## ディレクトリ構造
 
 ```
-src-tauri/
-├── src/
+root/
+├── tailwind.config.js   # Tailwind 設定
+├── postcss.config.js    # PostCSS 設定
+├── vite.config.ts       # Vite 設定
+├── tsconfig.json        # TypeScript 設定
+├── package.json         # NPM 依存関係
+├── src-tauri/
+│   ├── src/
 │   ├── lib.rs           # エントリポイント、Tauri設定
 │   ├── main.rs          # メインエントリ
 │   ├── task.rs          # Task構造体、ファイルI/O
@@ -219,3 +229,4 @@ npm run tauri build
 - **2024-12**: サブタスク機能、ダッシュボード、Single Instance プラグイン追加
 - **2024-12**: ファイル構造リファクタリング（lib.rs 分割）
 - **2024-12**: Monokai Dimmed テーマ追加
+- **2025-12**: Tailwind CSS への移行（レイアウト、コンポーネント）、チェックボックスのサイズ問題修正、アプリ名の正式変更 (Noruno Platform)
