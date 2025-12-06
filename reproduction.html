@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --border-primary: #ccc;
+            --bg-tertiary: #f0f0f0;
+            --text-primary: #333;
+        }
+        input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-primary);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <input type="checkbox" class="task-checkbox"> Unchecked
+    <br>
+    <input type="checkbox" class="task-checkbox" checked> Checked
+</body>
+</html>

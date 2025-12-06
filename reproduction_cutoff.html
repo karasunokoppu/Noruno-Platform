@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            --border-primary: #ccc;
+            --bg-tertiary: #f0f0f0;
+            --text-primary: #333;
+            --accent-primary: #646cff;
+        }
+        /* Global input styles mimicking App.css */
+        input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-primary);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        /* My previous fix */
+        .task-checkbox {
+            width: 20px;
+            min-width: 20px;
+            height: 20px;
+            min-height: 20px;
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            transform: none;
+            box-sizing: border-box;
+        }
+
+        .task-checkbox:checked {
+            width: 20px;
+            height: 20px;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h3>Current Implementation Test</h3>
+        <label>
+            <input type="checkbox" class="task-checkbox"> Unchecked
+        </label>
+        <br><br>
+        <label>
+            <input type="checkbox" class="task-checkbox" checked> Checked
+        </label>
+    </div>
+</body>
+</html>

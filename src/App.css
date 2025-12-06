@@ -499,10 +499,30 @@ button.danger:hover {
   gap: 15px;
 }
 
+/* Custom Checkbox Styles - Reverted to Native with Fixes */
 .task-checkbox {
+  appearance: auto;
+  -webkit-appearance: auto;
   width: 20px;
   height: 20px;
   cursor: pointer;
+  margin: 0;
+  padding: 0;
+  /* Reset global input styles that cause rendering issues */
+  background-color: initial;
+  border: initial;
+  border-radius: 4px;
+  transform: none;
+  box-sizing: border-box;
+  accent-color: var(--accent-primary);
+  flex-shrink: 0;
+  /* Prevent shrinking in flex container */
+}
+
+/* Redundant :checked block removed as it was causing no helpful change and base class covers it */
+
+.task-checkbox:hover {
+  /* No special hover for native checkbox needed */
 }
 
 .task-info {
@@ -1943,6 +1963,14 @@ button.danger:hover {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  background-color: transparent;
+  accent-color: var(--accent-primary);
+  /* Reset global input styles */
+  border: none;
+  appearance: auto;
 }
 
 .subtask-item span {
