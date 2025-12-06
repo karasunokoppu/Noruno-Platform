@@ -1,3 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-bg-hover: var(--bg-hover);
+  --color-bg-active: var(--bg-active);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+
+  --color-border-primary: var(--border-primary);
+  --color-border-secondary: var(--border-secondary);
+
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
+
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+
+  --color-shadow: var(--shadow);
+  --color-shadow-strong: var(--shadow-strong);
+  --color-overlay: var(--overlay);
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -257,23 +286,10 @@ body {
   height: 100vh;
 }
 
-.container {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
+
 
 /* Sidebar */
-.sidebar-container {
-  width: 250px;
-  background-color: var(--bg-secondary);
-  border-right: 1px solid var(--border-primary);
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  box-shadow: 2px 0 5px var(--shadow);
-}
+/* Sidebar */
 
 .sidebar-item {
   padding: 10px 15px;
@@ -297,14 +313,7 @@ body {
 }
 
 /* Main Content */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background-color: var(--bg-primary);
-  overflow: hidden;
-}
+/* Main Content */
 
 /* Input Section */
 .input-section {
@@ -499,31 +508,7 @@ button.danger:hover {
   gap: 15px;
 }
 
-/* Custom Checkbox Styles - Reverted to Native with Fixes */
-.task-checkbox {
-  appearance: auto;
-  -webkit-appearance: auto;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  margin: 0;
-  padding: 0;
-  /* Reset global input styles that cause rendering issues */
-  background-color: initial;
-  border: initial;
-  border-radius: 4px;
-  transform: none;
-  box-sizing: border-box;
-  accent-color: var(--accent-primary);
-  flex-shrink: 0;
-  /* Prevent shrinking in flex container */
-}
 
-/* Redundant :checked block removed as it was causing no helpful change and base class covers it */
-
-.task-checkbox:hover {
-  /* No special hover for native checkbox needed */
-}
 
 .task-info {
   flex: 1;
@@ -1959,19 +1944,7 @@ button.danger:hover {
   background-color: var(--bg-hover);
 }
 
-.subtask-item input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  background-color: transparent;
-  accent-color: var(--accent-primary);
-  /* Reset global input styles */
-  border: none;
-  appearance: auto;
-}
+
 
 .subtask-item span {
   flex: 1;

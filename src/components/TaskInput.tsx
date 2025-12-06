@@ -42,85 +42,98 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, existingGroups }) => {
         }
     };
 
+    const inputClass = "p-2.5 rounded-md border border-border-primary bg-bg-tertiary text-text-primary text-sm focus:outline-none focus:border-accent-primary focus:bg-bg-secondary transition-colors";
+    const buttonClass = "p-2.5 rounded-md border-none bg-accent-primary text-text-primary text-sm font-bold cursor-pointer transition-colors hover:bg-accent-hover";
+    const secondaryButtonClass = "bg-bg-active hover:bg-bg-hover";
+
+    // Small numeric input style
+    const numInputClass = "w-[60px] p-1.5 text-center rounded border border-border-primary bg-bg-tertiary text-text-primary text-sm focus:outline-none focus:border-accent-primary";
+    const labelClass = "text-[10px] text-text-tertiary text-center block mt-0.5";
+
     return (
-        <div className="task-input">
-            <div className="input-row">
+        <div className="bg-bg-secondary p-4 rounded-xl shadow-[0_4px_6px_var(--shadow)] mb-5">
+            <div className="flex gap-2.5 mb-2.5">
                 <input
                     type="text"
                     placeholder="Task description..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    style={{ flex: 2 }}
+                    className={`${inputClass} flex-[2]`}
                 />
                 <button
-                    className="secondary"
+                    className={`${buttonClass} ${secondaryButtonClass} min-w-[120px] border border-border-primary`}
                     onClick={() => setShowDatePicker(true)}
-                    style={{ minWidth: "120px" }}
                 >
                     {date ? date.replace(/-/g, '/') : "Select Date"}
                 </button>
-                <CustomDropdown
-                    value={group}
-                    onChange={setGroup}
-                    options={[
-                        { value: "", label: "No Group" },
-                        ...existingGroups.map(g => ({ value: g, label: g }))
-                    ]}
-                    style={{ flex: 1 }}
-                />
-                <button onClick={handleSubmit}>Add Task</button>
+                <div className="flex-1">
+                    <CustomDropdown
+                        value={group}
+                        onChange={setGroup}
+                        options={[
+                            { value: "", label: "No Group" },
+                            ...existingGroups.map(g => ({ value: g, label: g }))
+                        ]}
+                        // Passing CSS variable style for now if CustomDropdown needs it, or handled by className if supported?
+                        // Assuming CustomDropdown is untouched but accepts style. 
+                        style={{ width: '100%' }}
+                    />
+                </div>
+                <button className={buttonClass} onClick={handleSubmit}>Add Task</button>
             </div>
-            <div className="input-row">
+
+            <div className="flex gap-2.5 mb-2.5">
                 <input
                     type="text"
                     placeholder="Details (optional)..."
                     value={details}
                     onChange={(e) => setDetails(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    style={{ width: "100%", flex: 3 }}
+                    className={`${inputClass} w-full flex-[3]`}
                 />
             </div>
-            <div className="input-row" style={{ marginTop: '10px' }}>
-                <label style={{ fontSize: '14px', color: 'var(--text-secondary)', marginRight: '10px', minWidth: 'fit-content' }}>Notify before:</label>
-                <div style={{ display: 'flex', gap: '8px', maxWidth: '400px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+
+            <div className="flex gap-2.5 mt-2.5 items-center">
+                <label className="text-sm text-text-secondary mr-2.5 min-w-fit">Notify before:</label>
+                <div className="flex gap-2 max-w-[400px]">
+                    <div>
                         <input
                             type="number"
                             placeholder="0"
                             value={notifyDays}
                             onChange={(e) => setNotifyDays(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            style={{ width: '60px', padding: '6px', textAlign: 'center' }}
+                            className={numInputClass}
                             min="0"
                         />
-                        <small style={{ fontSize: '10px', color: '#888', textAlign: 'center' }}>Days</small>
+                        <small className={labelClass}>Days</small>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div>
                         <input
                             type="number"
                             placeholder="0"
                             value={notifyHours}
                             onChange={(e) => setNotifyHours(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            style={{ width: '60px', padding: '6px', textAlign: 'center' }}
+                            className={numInputClass}
                             min="0"
                             max="23"
                         />
-                        <small style={{ fontSize: '10px', color: '#888', textAlign: 'center' }}>Hours</small>
+                        <small className={labelClass}>Hours</small>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div>
                         <input
                             type="number"
                             placeholder="0"
                             value={notifyMinutes}
                             onChange={(e) => setNotifyMinutes(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            style={{ width: '60px', padding: '6px', textAlign: 'center' }}
+                            className={numInputClass}
                             min="0"
                             max="59"
                         />
-                        <small style={{ fontSize: '10px', color: '#888', textAlign: 'center' }}>Minutes</small>
+                        <small className={labelClass}>Minutes</small>
                     </div>
                 </div>
             </div>

@@ -117,8 +117,8 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <div className="sidebar-container">
+    <div className="flex w-full h-full overflow-hidden text-text-primary bg-bg-primary">
+      <div className="w-[250px] bg-bg-secondary border-r border-border-primary flex flex-col p-[10px] shadow-[2px_0_5px_var(--shadow)]">
         <Sidebar
           tasks={tasks} // Keep for counts if needed, or remove if not used
           groups={groups}
@@ -130,7 +130,7 @@ function App() {
         />
       </div>
 
-      <div className="main-content">
+      <div className="flex-1 flex flex-col p-5 bg-bg-primary overflow-hidden">
         {currentGroup === "__DASHBOARD__" ? (
           <DashboardView tasks={tasks} readingBooks={readingBooks} />
         ) : currentGroup === "__CALENDAR__" ? (

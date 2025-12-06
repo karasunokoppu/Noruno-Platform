@@ -40,45 +40,68 @@ const Sidebar: React.FC<SidebarProps> = ({ tasks, groups, currentGroup, onSelect
         setIsAdding(false);
     };
 
+    const itemBaseClass = "flex items-center gap-2.5 px-4 py-2.5 mb-1.5 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-bg-hover";
+    const activeClass = "bg-bg-active font-bold text-text-primary";
+    const getItemClass = (isActive: boolean) => `${itemBaseClass} ${isActive ? activeClass : ""}`;
+
     return (
-        <div className="sidebar">
-            <div className={`sidebar-item ${currentGroup === "__ALL__" ? "active" : ""}`} onClick={() => onSelectGroup("__ALL__")}>📋 All Tasks</div>
-            <div className={`sidebar-item ${currentGroup === "__DASHBOARD__" ? "active" : ""}`} onClick={() => onSelectGroup("__DASHBOARD__")}>📊 Dashboard</div>
-            <div className={`sidebar-item ${currentGroup === "__CALENDAR__" ? "active" : ""}`} onClick={() => onSelectGroup("__CALENDAR__")}>📅 Calendar</div>
-            <div className={`sidebar-item ${currentGroup === "__MEMOS__" ? "active" : ""}`} onClick={() => onSelectGroup("__MEMOS__")}>📝 Memos</div>
-            <div className={`sidebar-item ${currentGroup === "__READING_MEMOS__" ? "active" : ""}`} onClick={() => onSelectGroup("__READING_MEMOS__")}>📚 Reading Memos</div>
-            <div className="sidebar-divider" style={{ margin: "10px 0", borderBottom: "1px solid #3a3a3a" }} />
-            <div className="groups-header" style={{ padding: "0 10px", marginBottom: "5px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.8em", color: "#888" }}>GROUPS</span>
-                <button onClick={() => setIsAdding(!isAdding)} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: "1.2em" }}>+</button>
+        <div className="w-full">
+            <div className={getItemClass(currentGroup === "__ALL__")} onClick={() => onSelectGroup("__ALL__")}>📋 All Tasks</div>
+            <div className={getItemClass(currentGroup === "__DASHBOARD__")} onClick={() => onSelectGroup("__DASHBOARD__")}>📊 Dashboard</div>
+            <div className={getItemClass(currentGroup === "__CALENDAR__")} onClick={() => onSelectGroup("__CALENDAR__")}>📅 Calendar</div>
+            <div className={getItemClass(currentGroup === "__MEMOS__")} onClick={() => onSelectGroup("__MEMOS__")}>📝 Memos</div>
+            <div className={getItemClass(currentGroup === "__READING_MEMOS__")} onClick={() => onSelectGroup("__READING_MEMOS__")}>📚 Reading Memos</div>
+
+            <div className="my-2.5 border-b border-border-primary" />
+
+            <div className="px-2.5 mb-1.5 flex justify-between items-center">
+                <span className="text-[0.8em] text-text-tertiary">GROUPS</span>
+                <button
+                    onClick={() => setIsAdding(!isAdding)}
+                    className="bg-transparent border-none text-text-tertiary cursor-pointer text-[1.2em] hover:text-text-primary"
+                >
+                    +
+                </button>
             </div>
+
             {isAdding && (
-                <div style={{ padding: "0 10px", marginBottom: "10px", display: "flex", alignItems: "center" }}>
+                <div className="px-2.5 mb-2.5 flex items-center">
                     <input
                         ref={inputRef}
                         type="text"
                         value={newGroupName}
                         onChange={e => setNewGroupName(e.target.value)}
                         placeholder="New Group"
-                        style={{ width: "100%", marginRight: "5px", padding: "2px 5px", background: "#333", border: "none", color: "white" }}
+                        className="w-full mr-[5px] px-[5px] py-[2px] bg-bg-tertiary border-none text-text-primary rounded focus:ring-1 focus:ring-accent-primary outline-none"
                         onKeyDown={e => { if (e.key === "Enter") handleAddGroup(); if (e.key === "Escape") handleCancelAdd(); }}
                     />
-                    <button onClick={handleCancelAdd} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: "1.2em", padding: "0" }} title="Cancel">✕</button>
+                    <button onClick={handleCancelAdd} className="bg-transparent border-none text-text-tertiary cursor-pointer text-[1.2em] p-0 hover:text-danger" title="Cancel">✕</button>
                 </div>
             )}
+
             {groups.map(group => (
-                <div key={group} className={`sidebar-item ${currentGroup === group ? "active" : ""}`} onClick={() => onSelectGroup(group)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ display: "flex", alignItems: "center" }}><span>📁</span> {group}</div>
-                    <button onClick={e => { e.stopPropagation(); if (confirm(`Delete group "${group}"?`)) onDeleteGroup(group); }} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8em", padding: "0 5px" }} className="delete-group-btn">✕</button>
+                <div key={group} className={`${getItemClass(currentGroup === group)} justify-between group`} onClick={() => onSelectGroup(group)}>
+                    <div className="flex items-center gap-1"><span>📁</span> {group}</div>
+                    <button
+                        onClick={e => { e.stopPropagation(); if (confirm(`Delete group "${group}"?`)) onDeleteGroup(group); }}
+                        className="bg-transparent border-none text-text-disabled cursor-pointer text-[0.8em] px-[5px] opacity-0 group-hover:opacity-100 transition-opacity hover:text-danger"
+                    >
+                        ✕
+                    </button>
                 </div>
             ))}
+
             {hasNoGroup && (
-                <div className={`sidebar-item ${currentGroup === "__NO_GROUP__" ? "active" : ""}`} onClick={() => onSelectGroup("__NO_GROUP__")}>📄 No Group</div>
+                <div className={getItemClass(currentGroup === "__NO_GROUP__")} onClick={() => onSelectGroup("__NO_GROUP__")}>📄 No Group</div>
             )}
-            <div className="sidebar-divider" style={{ margin: "10px 0", borderBottom: "1px solid #3a3a3a" }} />
-            <div className="sidebar-item" onClick={onOpenSettings} style={{ marginBottom: "10px" }}>⚙️ Settings</div>
+
+            <div className="my-2.5 border-b border-border-primary" />
+
+            <div className={`${getItemClass(false)} mb-2.5`} onClick={onOpenSettings}>⚙️ Settings</div>
         </div>
     );
 };
 
 export default Sidebar;
+
+
