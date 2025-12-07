@@ -195,7 +195,7 @@ src/
 
 ## データ保存場所
 
-- **Windows**: `%APPDATA%\noruno_platform\`
+- **Windows**: `C:\Users\[UserName]\AppData\Roaming\com.noruno.platform\`
 - **Linux**: `~/.local/share/noruno_platform/`
 - **macOS**: `~/Library/Application Support/noruno_platform/`
 
