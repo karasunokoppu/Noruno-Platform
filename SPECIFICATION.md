@@ -220,6 +220,8 @@ npm run tauri dev
 
 # 本番ビルド
 npm run tauri build
+### Arch系
+No_STRIP=true npm run tauri build
 ```
 
 ---
@@ -230,3 +232,4 @@ npm run tauri build
 - **2024-12**: ファイル構造リファクタリング（lib.rs 分割）
 - **2024-12**: Monokai Dimmed テーマ追加
 - **2025-12**: Tailwind CSS への移行（レイアウト、コンポーネント）、チェックボックスのサイズ問題修正、アプリ名の正式変更 (Noruno Platform)
+- **2025-12**: Arch系 Linuxでの本番ビルドようコマンド(CachyOSで検証)を追加

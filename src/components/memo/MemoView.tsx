@@ -143,22 +143,24 @@ const MemoView: React.FC = () => {
 
     return (
         <div className="memo-view">
-            <FolderTree
-                folders={folders}
-                selectedFolder={selectedFolder}
-                onSelectFolder={setSelectedFolder}
-                onCreateFolder={handleCreateFolder}
-                onRenameFolder={handleRenameFolder}
-                onDeleteFolder={handleDeleteFolder}
-            />
-            <MemoList
-                memos={filteredMemos}
-                selectedMemo={selectedMemo}
-                onSelectMemo={setSelectedMemo}
-                onCreateMemo={handleCreateMemo}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-            />
+            <div className="memo-sidebar">
+                <FolderTree
+                    folders={folders}
+                    selectedFolder={selectedFolder}
+                    onSelectFolder={setSelectedFolder}
+                    onCreateFolder={handleCreateFolder}
+                    onRenameFolder={handleRenameFolder}
+                    onDeleteFolder={handleDeleteFolder}
+                />
+                <MemoList
+                    memos={filteredMemos}
+                    selectedMemo={selectedMemo}
+                    onSelectMemo={setSelectedMemo}
+                    onCreateMemo={handleCreateMemo}
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                />
+            </div>
             <MemoEditor
                 memo={selectedMemo}
                 folders={folders}

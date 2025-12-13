@@ -2,7 +2,8 @@
 
 use tauri::State;
 
-use crate::memo::{save_folders, save_memos, Folder, Memo};
+use crate::database;
+use crate::memo::{Folder, Memo};
 use crate::AppState;
 
 // ========================================
@@ -22,42 +23,63 @@ pub fn get_memo(state: State<AppState>, id: String) -> Option<Memo> {
 }
 
 #[tauri::command]
-pub fn create_memo(
-    state: State<AppState>,
+pub async fn create_memo(
+    state: State<'_, AppState>,
     title: String,
     content: String,
     folder_id: Option<String>,
     tags: Vec<String>,
 ) -> Result<Vec<Memo>, String> {
-    let mut memos = state.memos.lock().unwrap();
-    let memo = Memo::new(title, content, folder_id, tags);
-    memos.push(memo);
-    save_memos(&memos)?;
+    let memo = {
+        let mut memos = state.memos.lock().unwrap();
+        let memo = Memo::new(title, content, folder_id, tags);
+        memos.push(memo.clone());
+        memo
+    };
+
+    database::db_save_memo(&state.db, &memo).await?;
+
+    let memos = state.memos.lock().unwrap();
     Ok(memos.clone())
 }
 
 #[tauri::command]
-pub fn update_memo(
-    state: State<AppState>,
+pub async fn update_memo(
+    state: State<'_, AppState>,
     id: String,
     title: String,
     content: String,
     folder_id: Option<String>,
     tags: Vec<String>,
 ) -> Result<Vec<Memo>, String> {
-    let mut memos = state.memos.lock().unwrap();
-    if let Some(memo) = memos.iter_mut().find(|m| m.id == id) {
-        memo.update(title, content, folder_id, tags);
-        save_memos(&memos)?;
+    let memo_to_save = {
+        let mut memos = state.memos.lock().unwrap();
+        if let Some(memo) = memos.iter_mut().find(|m| m.id == id) {
+            memo.update(title, content, folder_id, tags);
+            Some(memo.clone())
+        } else {
+            None
+        }
+    };
+
+    if let Some(memo) = memo_to_save {
+        database::db_save_memo(&state.db, &memo).await?;
     }
+
+    let memos = state.memos.lock().unwrap();
     Ok(memos.clone())
 }
 
 #[tauri::command]
-pub fn delete_memo(state: State<AppState>, id: String) -> Result<Vec<Memo>, String> {
-    let mut memos = state.memos.lock().unwrap();
-    memos.retain(|m| m.id != id);
-    save_memos(&memos)?;
+pub async fn delete_memo(state: State<'_, AppState>, id: String) -> Result<Vec<Memo>, String> {
+    {
+        let mut memos = state.memos.lock().unwrap();
+        memos.retain(|m| m.id != id);
+    }
+
+    database::db_delete_memo(&state.db, &id).await?;
+
+    let memos = state.memos.lock().unwrap();
     Ok(memos.clone())
 }
 
@@ -98,48 +120,76 @@ pub fn get_folders(state: State<AppState>) -> Vec<Folder> {
 }
 
 #[tauri::command]
-pub fn create_folder(
-    state: State<AppState>,
+pub async fn create_folder(
+    state: State<'_, AppState>,
     name: String,
     parent_id: Option<String>,
 ) -> Result<Vec<Folder>, String> {
-    let mut folders = state.folders.lock().unwrap();
-    let folder = Folder::new(name, parent_id);
-    folders.push(folder);
-    save_folders(&folders)?;
+    let folder = {
+        let mut folders = state.folders.lock().unwrap();
+        let folder = Folder::new(name, parent_id);
+        folders.push(folder.clone());
+        folder
+    };
+
+    database::db_save_folder(&state.db, &folder).await?;
+
+    let folders = state.folders.lock().unwrap();
     Ok(folders.clone())
 }
 
 #[tauri::command]
-pub fn update_folder(
-    state: State<AppState>,
+pub async fn update_folder(
+    state: State<'_, AppState>,
     id: String,
     name: String,
 ) -> Result<Vec<Folder>, String> {
-    let mut folders = state.folders.lock().unwrap();
-    if let Some(folder) = folders.iter_mut().find(|f| f.id == id) {
-        folder.name = name;
-        save_folders(&folders)?;
+    let folder_to_save = {
+        let mut folders = state.folders.lock().unwrap();
+        if let Some(folder) = folders.iter_mut().find(|f| f.id == id) {
+            folder.name = name;
+            Some(folder.clone())
+        } else {
+            None
+        }
+    };
+
+    if let Some(folder) = folder_to_save {
+        database::db_save_folder(&state.db, &folder).await?;
     }
+
+    let folders = state.folders.lock().unwrap();
     Ok(folders.clone())
 }
 
 #[tauri::command]
-pub fn delete_folder(state: State<AppState>, id: String) -> Result<Vec<Folder>, String> {
-    let mut folders = state.folders.lock().unwrap();
-    let mut memos = state.memos.lock().unwrap();
+pub async fn delete_folder(state: State<'_, AppState>, id: String) -> Result<Vec<Folder>, String> {
+    let memos_to_update: Vec<Memo> = {
+        let mut folders = state.folders.lock().unwrap();
+        let mut memos = state.memos.lock().unwrap();
 
-    // Remove folder
-    folders.retain(|f| f.id != id);
+        // Remove folder
+        folders.retain(|f| f.id != id);
 
-    // Remove folder_id from memos in this folder
-    for memo in memos.iter_mut() {
-        if memo.folder_id.as_ref() == Some(&id) {
-            memo.folder_id = None;
+        // Remove folder_id from memos in this folder
+        let mut updated = Vec::new();
+        for memo in memos.iter_mut() {
+            if memo.folder_id.as_ref() == Some(&id) {
+                memo.folder_id = None;
+                updated.push(memo.clone());
+            }
         }
+        updated
+    };
+
+    // Delete folder from database
+    database::db_delete_folder(&state.db, &id).await?;
+
+    // Update affected memos in database
+    for memo in &memos_to_update {
+        let _ = database::db_save_memo(&state.db, memo).await;
     }
 
-    save_folders(&folders)?;
-    save_memos(&memos)?;
+    let folders = state.folders.lock().unwrap();
     Ok(folders.clone())
 }

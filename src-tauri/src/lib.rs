@@ -9,6 +9,7 @@ use tauri::Manager;
 
 // モジュール宣言
 mod commands;
+mod database;
 mod mail;
 mod memo;
 mod notification;
@@ -18,10 +19,10 @@ mod task;
 
 // 再エクスポート
 use mail::send_email;
-use memo::{load_folders, load_memos, Folder, Memo};
-use reading_memo::{load_reading_books, ReadingBook};
-use settings::{load_settings, MailSettings};
-use task::{load_groups, load_tasks, save_tasks, Task};
+use memo::{Folder, Memo};
+use reading_memo::ReadingBook;
+use settings::MailSettings;
+use task::Task;
 
 // コマンドの使用
 use commands::{
@@ -67,8 +68,11 @@ use commands::{
     update_task,
 };
 
+use sqlx::SqlitePool;
+
 /// アプリ内の状態を一括で管理している構造体
 pub struct AppState {
+    pub db: SqlitePool,
     pub tasks: Mutex<Vec<Task>>,
     pub groups: Mutex<Vec<String>>,
     pub next_id: Mutex<i32>,
@@ -97,23 +101,42 @@ pub fn run() {
                 .path()
                 .app_data_dir()
                 .expect("failed to resolve app data dir");
-            let data_file = app_data_dir.join("tasks.json");
-            let groups_file = app_data_dir.join("groups.json");
-            let mail_settings_file = app_data_dir.join("settings.json");
 
             // Ensure directory exists
             if !app_data_dir.exists() {
                 let _ = fs::create_dir_all(&app_data_dir);
             }
 
-            // Load tasks and groups
-            let tasks = load_tasks(&data_file);
-            let groups = load_groups(&groups_file);
-            let mail_settings = load_settings(&mail_settings_file);
+            // Initialize database (blocking in setup)
+            let db = tauri::async_runtime::block_on(async {
+                database::init_db(&app_data_dir)
+                    .await
+                    .expect("Failed to initialize database")
+            });
+
+            // Load data from database
+            let (tasks, groups, mail_settings, memos, folders, reading_books) =
+                tauri::async_runtime::block_on(async {
+                    let tasks = database::db_load_tasks(&db).await.unwrap_or_default();
+                    let groups = database::db_load_groups(&db).await.unwrap_or_default();
+                    let settings = database::db_load_settings(&db).await.unwrap_or_default();
+                    let memos = database::db_load_memos(&db).await.unwrap_or_default();
+                    let folders = database::db_load_folders(&db).await.unwrap_or_default();
+                    let books = database::db_load_reading_books(&db)
+                        .await
+                        .unwrap_or_default();
+                    (tasks, groups, settings, memos, folders, books)
+                });
+
             let max_id = tasks.iter().map(|t| t.id).max().unwrap_or(0);
 
-            // Initialize state
+            // Initialize state (data_file and groups_file kept for backward compatibility during transition)
+            let data_file = app_data_dir.join("tasks.json");
+            let groups_file = app_data_dir.join("groups.json");
+            let mail_settings_file = app_data_dir.join("settings.json");
+
             app.manage(AppState {
+                db,
                 tasks: Mutex::new(tasks),
                 groups: Mutex::new(groups),
                 next_id: Mutex::new(max_id + 1),
@@ -121,9 +144,9 @@ pub fn run() {
                 groups_file: Mutex::new(groups_file),
                 mail_settings: Mutex::new(mail_settings),
                 mail_settings_file: Mutex::new(mail_settings_file),
-                memos: Mutex::new(load_memos().unwrap_or_default()),
-                folders: Mutex::new(load_folders().unwrap_or_default()),
-                reading_books: Mutex::new(load_reading_books().unwrap_or_default()),
+                memos: Mutex::new(memos),
+                folders: Mutex::new(folders),
+                reading_books: Mutex::new(reading_books),
             });
 
             // Background task for notifications
@@ -147,10 +170,9 @@ pub fn run() {
                     let mut tasks_to_notify = Vec::new();
                     let now = Local::now();
 
-                    {
+                    let tasks_to_update: Vec<Task> = {
                         let mut tasks = state.tasks.lock().unwrap();
-                        let data_file = state.data_file.lock().unwrap();
-                        let mut changed = false;
+                        let mut updated = Vec::new();
 
                         for task in tasks.iter_mut() {
                             if task.completed || task.notified {
@@ -193,13 +215,15 @@ pub fn run() {
                             if minutes_until_due <= threshold as i64 && minutes_until_due >= 0 {
                                 tasks_to_notify.push(task.clone());
                                 task.notified = true;
-                                changed = true;
+                                updated.push(task.clone());
                             }
                         }
+                        updated
+                    };
 
-                        if changed {
-                            save_tasks(&tasks, &data_file);
-                        }
+                    // Save updated tasks to database
+                    for task in &tasks_to_update {
+                        let _ = database::db_save_task(&state.db, task).await;
                     }
 
                     for task in tasks_to_notify {
