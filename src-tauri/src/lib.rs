@@ -1,7 +1,11 @@
 // Tauri アプリケーションのエントリポイント
 
+use rfd::MessageDialog;
 use std::fs;
+use std::io::Write;
+use std::panic;
 use std::path::PathBuf;
+
 use std::sync::Mutex;
 
 use chrono::{Local, NaiveDate, NaiveDateTime, TimeZone};
@@ -93,6 +97,37 @@ pub struct AppState {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // Panic hook for logging crashes
+    panic::set_hook(Box::new(|info| {
+        let location = info.location().unwrap_or(panic::Location::caller());
+        let msg = match info.payload().downcast_ref::<&str>() {
+            Some(s) => *s,
+            None => match info.payload().downcast_ref::<String>() {
+                Some(s) => &s[..],
+                None => "Box<Any>",
+            },
+        };
+
+        let err_msg = format!("Panic occurred: {}\nLocation: {}", msg, location);
+
+        // Try to write to a log file in a temporary directory to avoid permission issues
+        let log_path = std::env::temp_dir().join("noruno_crash.log");
+        if let Ok(mut file) = std::fs::File::create(&log_path) {
+            let _ = writeln!(file, "{}", err_msg);
+        }
+
+        // Show a dialog
+        MessageDialog::new()
+            .set_title("Application Error")
+            .set_description(&format!(
+                "The application has crashed.\n\nError: {}\n\nLog saved to: {}",
+                err_msg,
+                log_path.display()
+            ))
+            .set_level(rfd::MessageLevel::Error)
+            .show();
+    }));
+
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             // アプリが既に起動している場合、既存のウィンドウをフォーカス
@@ -115,9 +150,25 @@ pub fn run() {
 
             // Initialize database (blocking in setup)
             let db = tauri::async_runtime::block_on(async {
-                database::init_db(&app_data_dir)
-                    .await
-                    .expect("Failed to initialize database")
+                match database::init_db(&app_data_dir).await {
+                    Ok(pool) => pool,
+                    Err(e) => {
+                        let log_path = app_data_dir.join("startup_error.log");
+                        let _ = fs::write(&log_path, &e);
+
+                        MessageDialog::new()
+                            .set_title("Startup Error")
+                            .set_description(&format!(
+                                "Failed to initialize database:\n{}\n\nLog saved to: {}",
+                                e,
+                                log_path.display()
+                            ))
+                            .set_level(rfd::MessageLevel::Error)
+                            .show();
+
+                        std::process::exit(1);
+                    }
+                }
             });
 
             // Load data from database
