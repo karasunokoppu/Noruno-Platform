@@ -8,6 +8,7 @@ use chrono::{Local, NaiveDate, NaiveDateTime, TimeZone};
 use tauri::Manager;
 
 // モジュール宣言
+mod calendar;
 mod commands;
 mod database;
 mod mail;
@@ -34,11 +35,13 @@ use commands::{
     add_task,
     check_notifications,
     complete_task,
+    create_calendar_event,
     // メモ関連
     create_folder,
     create_group,
     create_memo,
     create_reading_book,
+    delete_calendar_event,
     delete_folder,
     delete_group,
     delete_memo,
@@ -48,6 +51,8 @@ use commands::{
     delete_subtask,
     delete_task,
     get_all_tags,
+    // Calendar
+    get_calendar_events,
     get_folders,
     get_groups,
     get_mail_settings,
@@ -59,6 +64,7 @@ use commands::{
     search_memos,
     send_test_email,
     toggle_subtask,
+    update_calendar_event,
     update_folder,
     update_memo,
     update_reading_book,
@@ -293,7 +299,13 @@ pub fn run() {
             add_subtask,
             update_subtask,
             delete_subtask,
-            toggle_subtask
+            delete_subtask,
+            toggle_subtask,
+            // Calendar
+            get_calendar_events,
+            create_calendar_event,
+            update_calendar_event,
+            delete_calendar_event
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

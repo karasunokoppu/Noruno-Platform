@@ -2,15 +2,6 @@
 
 use chrono::{Local, NaiveDate, NaiveDateTime, TimeZone};
 
-use crate::mail::send_email;
-use crate::settings::MailSettings;
-use crate::task::{save_tasks, Task};
-use std::path::PathBuf;
-use std::sync::MutexGuard;
-
-/// 日付文字列から期限までの分数を計算
-///
-/// DateTime形式（"%Y-%m-%d %H:%M"）またはDate形式（"%Y-%m-%d"）をサポート
 #[allow(dead_code)]
 pub fn calculate_minutes_until_due(due_date: &str) -> Option<i64> {
     let now = Local::now();
@@ -31,55 +22,4 @@ pub fn calculate_minutes_until_due(due_date: &str) -> Option<i64> {
     }
 
     None
-}
-
-/// バックグラウンドで通知をチェックして送信
-#[allow(dead_code)]
-pub fn check_and_send_notifications(
-    tasks: &mut MutexGuard<Vec<Task>>,
-    data_file: &MutexGuard<PathBuf>,
-    settings: &MailSettings,
-) {
-    if settings.email.is_empty() || settings.app_password.is_empty() {
-        return;
-    }
-
-    let mut tasks_to_notify = Vec::new();
-    let mut changed = false;
-
-    for task in tasks.iter_mut() {
-        if task.completed || task.notified {
-            continue;
-        }
-
-        let minutes_until_due = match calculate_minutes_until_due(&task.due_date) {
-            Some(m) => m,
-            None => continue,
-        };
-
-        let threshold = task
-            .notification_minutes
-            .unwrap_or(settings.notification_minutes);
-
-        if minutes_until_due <= threshold as i64 && minutes_until_due >= 0 {
-            tasks_to_notify.push(task.clone());
-            task.notified = true;
-            changed = true;
-        }
-    }
-
-    if changed {
-        save_tasks(tasks, data_file);
-    }
-
-    // 通知メールを送信
-    for task in tasks_to_notify {
-        let subject = format!("[Todo App] Task Due: {}", task.description);
-        let body = format!(
-            "Your task '{}' is due on {}.\n\nDetails: {}\nGroup: {}",
-            task.description, task.due_date, task.details, task.group
-        );
-
-        let _ = send_email(settings, &settings.email, &subject, &body);
-    }
 }

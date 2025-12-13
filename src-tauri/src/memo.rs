@@ -88,19 +88,6 @@ pub fn load_memos() -> Result<Vec<Memo>, String> {
     serde_json::from_str(&contents).map_err(|e| format!("Failed to parse memos: {}", e))
 }
 
-pub fn save_memos(memos: &Vec<Memo>) -> Result<(), String> {
-    let path = get_memos_file_path();
-
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
-    }
-
-    let json = serde_json::to_string_pretty(memos)
-        .map_err(|e| format!("Failed to serialize memos: {}", e))?;
-
-    fs::write(&path, json).map_err(|e| format!("Failed to write memos file: {}", e))
-}
-
 pub fn load_folders() -> Result<Vec<Folder>, String> {
     let path = get_folders_file_path();
     if !path.exists() {
@@ -111,17 +98,4 @@ pub fn load_folders() -> Result<Vec<Folder>, String> {
         fs::read_to_string(&path).map_err(|e| format!("Failed to read folders file: {}", e))?;
 
     serde_json::from_str(&contents).map_err(|e| format!("Failed to parse folders: {}", e))
-}
-
-pub fn save_folders(folders: &Vec<Folder>) -> Result<(), String> {
-    let path = get_folders_file_path();
-
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
-    }
-
-    let json = serde_json::to_string_pretty(folders)
-        .map_err(|e| format!("Failed to serialize folders: {}", e))?;
-
-    fs::write(&path, json).map_err(|e| format!("Failed to write folders file: {}", e))
 }

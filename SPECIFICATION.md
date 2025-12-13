@@ -2,7 +2,7 @@
 
 ## 概要
 
-**Noruno Platform** は、Tauri + React + TypeScript で構築されたマルチ機能デスクトップアプリケーションです。タスク管理、メモ、読書記録を統合したオールインワンの生産性ツールです。
+**Noruno Platform** は、Tauri v2 + React + TypeScript で構築されたマルチ機能デスクトップアプリケーションです。タスク管理、高度なメモ、読書記録、カレンダー機能を統合したオールインワンの生産性ツールです。
 
 ---
 
@@ -13,8 +13,9 @@
 | フレームワーク | Tauri v2 |
 | フロントエンド | React + TypeScript + Vite + Tailwind CSS |
 | バックエンド | Rust |
-| データ保存 | JSON ファイル（ローカル） |
-| 通知 | Gmail SMTP (lettre) |
+| データベース | SQLite (SQLx) |
+| 通知 | Gmail SMTP (lettre) + システム通知 |
+| テーマ | CSS Variables + Tailwind Colors |
 
 ---
 
@@ -24,9 +25,9 @@
 
 | パッケージ | バージョン | 用途 |
 |-----------|-----------|------|
-| react | ^19.1.0 | UIフレームワーク |
-| react-dom | ^19.1.0 | React DOMレンダリング |
-| @tauri-apps/api | ^2 | Tauri バックエンド通信 |
+| react | ^19.2.1 | UIフレームワーク |
+| react-dom | ^19.2.1 | React DOMレンダリング |
+| @tauri-apps/api | ^2.9.1 | Tauri バックエンド通信 |
 | @tauri-apps/plugin-opener | ^2 | 外部リンク/ファイルを開く |
 | @tauri-apps/plugin-notification | ^2.3.3 | システム通知 |
 | react-markdown | ^10.1.0 | Markdownレンダリング |
@@ -41,12 +42,10 @@
 
 | パッケージ | バージョン | 用途 |
 |-----------|-----------|------|
-| typescript | ~5.8.3 | 型チェック |
-| vite | ^7.0.4 | ビルドツール・開発サーバー |
-| @vitejs/plugin-react | ^4.6.0 | ViteのReactプラグイン |
+| typescript | ~5.9.3 | 型チェック |
+| vite | ^7.2.6 | ビルドツール・開発サーバー |
+| @vitejs/plugin-react | ^5.1.1 | ViteのReactプラグイン |
 | @tauri-apps/cli | ^2 | Tauri CLIツール |
-| @types/react | ^19.1.8 | React型定義 |
-| @types/react-dom | ^19.1.6 | ReactDOM型定義 |
 
 ### バックエンド (Cargo)
 
@@ -63,6 +62,7 @@
 | uuid | 1.18.1 | UUID生成 (v4) |
 | image | 0.25 | 画像処理（アイコン用） |
 | dirs | 6.0.0 | OSのディレクトリパス取得 |
+| sqlx | 0.8 | SQLite データベース操作 |
 
 ### Tauri 機能フラグ
 
@@ -83,14 +83,23 @@
 | グループ分類 | カスタムグループでタスク分類 |
 | サブタスク | タスク内に子タスクを追加、進捗バー表示 |
 | 期限管理 | 日付・時間指定、カスタム通知設定 |
-| カレンダービュー | 月間カレンダーでタスク表示 |
+| リマインダー | 指定時間にメール通知・システム通知 |
+
+### 📅 カレンダー
+
+| 機能 | 説明 |
+|------|------|
+| 月表示 | タスクとイベントを月間カレンダーに表示 |
+| イベント管理 | 予定の作成、編集、削除 |
+| 色分け | イベントごとの色設定 |
+| 繰り返し | 繰り返し予定の設定（日、週、月など） |
 
 ### 📝 メモ機能
 
 | 機能 | 説明 |
 |------|------|
 | Markdown対応 | ライブプレビュー付きエディタ |
-| フォルダ管理 | フォルダでメモを整理 |
+| フォルダ管理 | 階層的なフォルダ構造でメモを整理 |
 | タグシステム | タグによる分類・検索 |
 | 検索 | 全文検索 |
 
@@ -98,10 +107,11 @@
 
 | 機能 | 説明 |
 |------|------|
-| 書籍管理 | タイトル、著者、ステータス管理 |
+| 書籍管理 | タイトル、著者、ステータス、カバー画像管理 |
 | 読書ノート | 書籍ごとにメモを記録 |
-| 読書セッション | 読書時間・ページ数を記録 |
+| 読書セッション | 読書日時・ページ数を記録 |
 | 進捗グラフ | 読書進捗の可視化 |
+| ステータス | 読みたい、読書中、読了、中断 |
 
 ### 📊 ダッシュボード
 
@@ -122,6 +132,8 @@
 - バックグラウンドで自動チェック（60秒間隔）
 
 ### 🎨 テーマ
+
+Tailwind CSS ベースのテーマシステムを採用。
 
 | テーマ名 | 説明 |
 |---------|------|
@@ -149,37 +161,42 @@ root/
 ├── package.json         # NPM 依存関係
 ├── src-tauri/
 │   ├── src/
-│   ├── lib.rs           # エントリポイント、Tauri設定
-│   ├── main.rs          # メインエントリ
-│   ├── task.rs          # Task構造体、ファイルI/O
-│   ├── notification.rs  # 通知ロジック
-│   ├── mail.rs          # メール送信
-│   ├── memo.rs          # メモ管理
-│   ├── reading_memo.rs  # 読書記録
-│   ├── settings.rs      # 設定管理
-│   └── commands/        # Tauriコマンド
-│       ├── mod.rs
-│       ├── task_commands.rs
-│       ├── memo_commands.rs
-│       └── reading_commands.rs
-
+│   │   ├── lib.rs           # エントリポイント、Tauri設定
+│   │   ├── main.rs          # メインエントリ
+│   │   ├── database.rs      # SQLite接続、マイグレーション
+│   │   ├── task.rs          # Task構造体
+│   │   ├── calendar.rs      # Calendar構造体
+│   │   ├── notification.rs  # 通知ロジック
+│   │   ├── mail.rs          # メール送信
+│   │   ├── memo.rs          # メモ管理
+│   │   ├── reading_memo.rs  # 読書記録
+│   │   ├── settings.rs      # 設定管理
+│   │   └── commands/        # Tauriコマンド
+│   │       ├── mod.rs
+│   │       ├── task_commands.rs
+│   │       ├── memo_commands.rs
+│   │       └── reading_commands.rs
+│   ├── migrations/          # SQLマイグレーションファイル
+│   └── Cargo.toml           # Rust 依存関係
+│
 src/
 ├── App.tsx              # メインアプリ
-├── App.css              # スタイル・テーマ
-└── components/
-    ├── TaskList.tsx
-    ├── TaskRow.tsx
-    ├── TaskInput.tsx
-    ├── SubtaskList.tsx
-    ├── EditDialog.tsx
-    ├── CalendarView.tsx
-    ├── CustomDropdown.tsx
-    ├── CustomDatePicker.tsx
-    ├── sidebar/
-    ├── settings/
-    ├── memo/
-    ├── reading/
-    └── dashboard/
+├── App.css              # グローバルスタイル
+├── components/          # Reactコンポーネント
+│   ├── dashboard/       # ダッシュボード関連
+│   ├── memo/            # メモ機能関連
+│   ├── reading/         # 読書記録関連
+│   ├── settings/        # 設定画面など
+│   ├── sidebar/         # サイドバー
+│   ├── TaskList.tsx
+│   ├── TaskRow.tsx
+│   ├── TaskInput.tsx
+│   ├── SubtaskList.tsx
+│   ├── EditDialog.tsx
+│   ├── CalendarView.tsx
+│   ├── CalendarEventDialog.tsx
+│   ├── CustomDropdown.tsx
+│   └── CustomDatePicker.tsx
 ```
 
 ---
@@ -195,6 +212,8 @@ src/
 
 ## データ保存場所
 
+アプリケーションデータは SQLite データベース (`noruno.db`) に保存されます。
+
 - **Windows**: `C:\Users\[UserName]\AppData\Roaming\com.noruno.platform\`
 - **Linux**: `~/.local/share/noruno_platform/`
 - **macOS**: `~/Library/Application Support/noruno_platform/`
@@ -203,12 +222,9 @@ src/
 
 | ファイル | 内容 |
 |----------|------|
-| tasks.json | タスクデータ |
-| groups.json | グループ一覧 |
-| settings.json | メール設定 |
-| memos.json | メモデータ |
-| folders.json | フォルダ一覧 |
-| reading_books.json | 読書記録 |
+| noruno.db | メインデータベース（SQLite） |
+| .db_migrated | 移行完了フラグファイル |
+| *.json.bak | 移行前のバックアップデータ |
 
 ---
 
@@ -220,7 +236,8 @@ npm run tauri dev
 
 # 本番ビルド
 npm run tauri build
-### Arch系
+
+# Arch系 Linux向けビルド（ストリップなし）
 No_STRIP=true npm run tauri build
 ```
 
@@ -229,7 +246,10 @@ No_STRIP=true npm run tauri build
 ## 更新履歴
 
 - **2024-12**: サブタスク機能、ダッシュボード、Single Instance プラグイン追加
-- **2024-12**: ファイル構造リファクタリング（lib.rs 分割）
-- **2024-12**: Monokai Dimmed テーマ追加
-- **2025-12**: Tailwind CSS への移行（レイアウト、コンポーネント）、チェックボックスのサイズ問題修正、アプリ名の正式変更 (Noruno Platform)
-- **2025-12**: Arch系 Linuxでの本番ビルドようコマンド(CachyOSで検証)を追加
+- **2024-12**: ファイル構造リファクタリング
+- **2025-01**: Monokai Dimmed テーマ追加
+- **2025-12**:
+  - UIを Tailwind CSS へ完全移行
+  - SQLite (SQLx) へのデータベース移行
+  - カレンダーイベント機能の追加
+  - アプリ名を "Noruno Platform" へ変更

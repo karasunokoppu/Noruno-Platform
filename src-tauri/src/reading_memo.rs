@@ -189,17 +189,3 @@ pub fn load_reading_books() -> Result<Vec<ReadingBook>, String> {
 
     serde_json::from_str(&contents).map_err(|e| format!("Failed to parse reading_books: {}", e))
 }
-
-/// 読書書籍データを保存
-pub fn save_reading_books(books: &Vec<ReadingBook>) -> Result<(), String> {
-    let path = get_reading_books_file_path();
-
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
-    }
-
-    let json = serde_json::to_string_pretty(books)
-        .map_err(|e| format!("Failed to serialize reading_books: {}", e))?;
-
-    fs::write(&path, json).map_err(|e| format!("Failed to write reading_books file: {}", e))
-}

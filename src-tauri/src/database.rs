@@ -386,14 +386,6 @@ pub async fn db_save_task(pool: &SqlitePool, task: &Task) -> Result<(), String> 
     Ok(())
 }
 
-/// 全タスクを一括保存
-pub async fn db_save_all_tasks(pool: &SqlitePool, tasks: &[Task]) -> Result<(), String> {
-    for task in tasks {
-        db_save_task(pool, task).await?;
-    }
-    Ok(())
-}
-
 /// タスクを削除
 pub async fn db_delete_task(pool: &SqlitePool, id: i32) -> Result<(), String> {
     sqlx::query("DELETE FROM tasks WHERE id = ?")
@@ -403,16 +395,6 @@ pub async fn db_delete_task(pool: &SqlitePool, id: i32) -> Result<(), String> {
         .map_err(|e| format!("Failed to delete task: {}", e))?;
 
     Ok(())
-}
-
-/// 次のタスクIDを取得
-pub async fn db_get_next_task_id(pool: &SqlitePool) -> Result<i32, String> {
-    let row = sqlx::query("SELECT COALESCE(MAX(id), 0) + 1 as next_id FROM tasks")
-        .fetch_one(pool)
-        .await
-        .map_err(|e| format!("Failed to get next task id: {}", e))?;
-
-    Ok(row.get("next_id"))
 }
 
 // --- Groups ---
@@ -773,6 +755,96 @@ pub async fn db_delete_reading_book(pool: &SqlitePool, id: &str) -> Result<(), S
         .execute(pool)
         .await
         .map_err(|e| format!("Failed to delete reading book: {}", e))?;
+
+    Ok(())
+}
+
+// --- Calendar Events ---
+
+use crate::calendar::CalendarEvent;
+
+/// 全イベントを読み込み
+pub async fn db_load_calendar_events(pool: &SqlitePool) -> Result<Vec<CalendarEvent>, String> {
+    let rows = sqlx::query(
+        "SELECT id, title, description, start_datetime, end_datetime, all_day, color, recurrence_rule, reminder_minutes, created_at, updated_at FROM calendar_events ORDER BY start_datetime"
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(|e| format!("Failed to load calendar events: {}", e))?;
+
+    let mut events = Vec::new();
+    for row in rows {
+        let created_at: String = row.get("created_at");
+        let updated_at: String = row.get("updated_at");
+
+        events.push(CalendarEvent {
+            id: row.get("id"),
+            title: row.get("title"),
+            description: row.get("description"),
+            start_datetime: row.get("start_datetime"),
+            end_datetime: row.get("end_datetime"),
+            all_day: row.get::<i32, _>("all_day") != 0,
+            color: row.get("color"),
+            recurrence_rule: row.get("recurrence_rule"),
+            reminder_minutes: row.get("reminder_minutes"),
+            created_at: DateTime::parse_from_rfc3339(&created_at)
+                .map(|d| d.with_timezone(&Utc))
+                .unwrap_or_else(|_| Utc::now()),
+            updated_at: DateTime::parse_from_rfc3339(&updated_at)
+                .map(|d| d.with_timezone(&Utc))
+                .unwrap_or_else(|_| Utc::now()),
+        });
+    }
+
+    Ok(events)
+}
+
+/// イベントを保存
+pub async fn db_save_calendar_event(
+    pool: &SqlitePool,
+    event: &CalendarEvent,
+) -> Result<(), String> {
+    sqlx::query(
+        r#"
+        INSERT INTO calendar_events (id, title, description, start_datetime, end_datetime, all_day, color, recurrence_rule, reminder_minutes, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            title = excluded.title,
+            description = excluded.description,
+            start_datetime = excluded.start_datetime,
+            end_datetime = excluded.end_datetime,
+            all_day = excluded.all_day,
+            color = excluded.color,
+            recurrence_rule = excluded.recurrence_rule,
+            reminder_minutes = excluded.reminder_minutes,
+            updated_at = excluded.updated_at
+        "#,
+    )
+    .bind(&event.id)
+    .bind(&event.title)
+    .bind(&event.description)
+    .bind(&event.start_datetime)
+    .bind(&event.end_datetime)
+    .bind(event.all_day)
+    .bind(&event.color)
+    .bind(&event.recurrence_rule)
+    .bind(event.reminder_minutes)
+    .bind(event.created_at.to_rfc3339())
+    .bind(event.updated_at.to_rfc3339())
+    .execute(pool)
+    .await
+    .map_err(|e| format!("Failed to save calendar event: {}", e))?;
+
+    Ok(())
+}
+
+/// イベントを削除
+pub async fn db_delete_calendar_event(pool: &SqlitePool, id: &str) -> Result<(), String> {
+    sqlx::query("DELETE FROM calendar_events WHERE id = ?")
+        .bind(id)
+        .execute(pool)
+        .await
+        .map_err(|e| format!("Failed to delete calendar event: {}", e))?;
 
     Ok(())
 }

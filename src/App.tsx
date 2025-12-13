@@ -116,6 +116,17 @@ function App() {
     }
   };
 
+  const handleSaveTask = async (task: Task) => {
+    if (task.id === 0) {
+      // New task
+      await handleAddTask(task.description, task.due_date, task.group, task.details, task.notification_minutes);
+    } else {
+      // Update task
+      await handleUpdateTask(task);
+    }
+    setEditingTask(null);
+  };
+
   return (
     <div className="flex w-full h-full overflow-hidden text-text-primary bg-bg-primary">
       <div className="w-[200px] bg-bg-secondary border-r border-border-primary flex flex-col p-[10px] shadow-[2px_0_5px_var(--shadow)]">
@@ -134,7 +145,20 @@ function App() {
         {currentGroup === "__DASHBOARD__" ? (
           <DashboardView tasks={tasks} readingBooks={readingBooks} />
         ) : currentGroup === "__CALENDAR__" ? (
-          <CalendarView tasks={tasks} groups={groups} onEdit={setEditingTask} />
+          <CalendarView
+            tasks={tasks}
+            groups={groups}
+            onEdit={setEditingTask}
+            onAddTask={(date) => setEditingTask({
+              id: 0,
+              description: "",
+              due_date: date,
+              group: "",
+              details: "",
+              completed: false,
+              subtasks: []
+            })}
+          />
         ) : currentGroup === "__MEMOS__" ? (
           <MemoView />
         ) : currentGroup === "__READING_MEMOS__" ? (
@@ -159,11 +183,11 @@ function App() {
         )}
       </div>
 
-      {editingTask && ( //editingTaskが真(値がセットされている)場合に描画する。
+      {editingTask && (
         <EditDialog
           task={editingTask}
           existingGroups={groups}
-          onSave={handleUpdateTask}
+          onSave={handleSaveTask}
           onCancel={() => setEditingTask(null)}
         />
       )}

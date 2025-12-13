@@ -2271,3 +2271,52 @@ button.danger:hover {
   color: var(--text-secondary);
   margin-top: 8px;
 }
+/* Markdown Checkbox Styling */
+.memo-preview-pane ul.contains-task-list,
+.markdown-body ul.contains-task-list {
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.memo-preview-pane li.task-list-item,
+.markdown-body li.task-list-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.memo-preview-pane input[type="checkbox"],
+.markdown-body input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 1.2em;
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid var(--text-tertiary);
+  border-radius: 4px;
+  margin-right: 0.5em;
+  position: relative;
+  top: 0.1em;
+  cursor: pointer;
+  background-color: var(--bg-tertiary);
+  flex-shrink: 0;
+}
+
+.memo-preview-pane input[type="checkbox"]:checked,
+.markdown-body input[type="checkbox"]:checked {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.memo-preview-pane input[type="checkbox"]:checked::after,
+.markdown-body input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 30%;
+  top: 10%;
+  width: 40%;
+  height: 70%;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}

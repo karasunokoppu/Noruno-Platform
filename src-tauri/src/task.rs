@@ -45,13 +45,6 @@ impl Task {
 }
 
 /// タスクデータをファイルに保存
-pub fn save_tasks(tasks: &Vec<Task>, file_path: &PathBuf) {
-    let json = serde_json::to_string_pretty(tasks).unwrap_or_default();
-    if let Some(parent) = file_path.parent() {
-        let _ = fs::create_dir_all(parent);
-    }
-    let _ = fs::write(file_path, json);
-}
 
 /// タスクデータをファイルから読み込み
 pub fn load_tasks(file_path: &PathBuf) -> Vec<Task> {
@@ -64,13 +57,6 @@ pub fn load_tasks(file_path: &PathBuf) -> Vec<Task> {
 }
 
 /// グループデータをファイルに保存
-pub fn save_groups(groups: &Vec<String>, file_path: &PathBuf) {
-    let json = serde_json::to_string_pretty(groups).unwrap_or_default();
-    if let Some(parent) = file_path.parent() {
-        let _ = fs::create_dir_all(parent);
-    }
-    let _ = fs::write(file_path, json);
-}
 
 /// グループデータをファイルから読み込み
 pub fn load_groups(file_path: &PathBuf) -> Vec<String> {

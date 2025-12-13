@@ -27,11 +27,3 @@ pub fn load_settings(file_path: &PathBuf) -> MailSettings {
     }
     MailSettings::default()
 }
-
-pub fn save_settings(settings: &MailSettings, file_path: &PathBuf) {
-    let json = serde_json::to_string_pretty(settings).unwrap_or_default();
-    if let Some(parent) = file_path.parent() {
-        let _ = fs::create_dir_all(parent);
-    }
-    let _ = fs::write(file_path, json);
-}
