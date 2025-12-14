@@ -14,7 +14,6 @@ use tauri::Manager;
 // モジュール宣言
 mod calendar;
 mod commands;
-mod database;
 mod mail;
 mod memo;
 mod notification;
@@ -25,6 +24,7 @@ mod task;
 pub mod tests;
 
 // 再エクスポート
+use calendar::CalendarEvent;
 use mail::send_email;
 use memo::{Folder, Memo};
 use reading_memo::ReadingBook;
@@ -80,11 +80,8 @@ use commands::{
     update_task,
 };
 
-use sqlx::SqlitePool;
-
 /// アプリ内の状態を一括で管理している構造体
 pub struct AppState {
-    pub db: SqlitePool,
     pub tasks: Mutex<Vec<Task>>,
     pub groups: Mutex<Vec<String>>,
     pub next_id: Mutex<i32>,
@@ -95,6 +92,7 @@ pub struct AppState {
     pub memos: Mutex<Vec<Memo>>,
     pub folders: Mutex<Vec<Folder>>,
     pub reading_books: Mutex<Vec<ReadingBook>>,
+    pub calendar_events: Mutex<Vec<CalendarEvent>>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -150,52 +148,23 @@ pub fn run() {
                 let _ = fs::create_dir_all(&app_data_dir);
             }
 
-            // Initialize database (blocking in setup)
-            let db = tauri::async_runtime::block_on(async {
-                match database::init_db(&app_data_dir).await {
-                    Ok(pool) => pool,
-                    Err(e) => {
-                        let log_path = app_data_dir.join("startup_error.log");
-                        let _ = fs::write(&log_path, &e);
-
-                        MessageDialog::new()
-                            .set_title("Startup Error")
-                            .set_description(&format!(
-                                "Failed to initialize database:\n{}\n\nLog saved to: {}",
-                                e,
-                                log_path.display()
-                            ))
-                            .set_level(rfd::MessageLevel::Error)
-                            .show();
-
-                        std::process::exit(1);
-                    }
-                }
-            });
-
-            // Load data from database
-            let (tasks, groups, mail_settings, memos, folders, reading_books) =
-                tauri::async_runtime::block_on(async {
-                    let tasks = database::db_load_tasks(&db).await.unwrap_or_default();
-                    let groups = database::db_load_groups(&db).await.unwrap_or_default();
-                    let settings = database::db_load_settings(&db).await.unwrap_or_default();
-                    let memos = database::db_load_memos(&db).await.unwrap_or_default();
-                    let folders = database::db_load_folders(&db).await.unwrap_or_default();
-                    let books = database::db_load_reading_books(&db)
-                        .await
-                        .unwrap_or_default();
-                    (tasks, groups, settings, memos, folders, books)
-                });
-
-            let max_id = tasks.iter().map(|t| t.id).max().unwrap_or(0);
-
             // Initialize state (data_file and groups_file kept for backward compatibility during transition)
             let data_file = app_data_dir.join("tasks.json");
             let groups_file = app_data_dir.join("groups.json");
             let mail_settings_file = app_data_dir.join("settings.json");
 
+            // Load data from JSON files
+            let tasks = task::load_tasks(&data_file);
+            let groups = task::load_groups(&groups_file);
+            let mail_settings = settings::load_settings(&mail_settings_file);
+            let memos = memo::load_memos().unwrap_or_default();
+            let folders = memo::load_folders().unwrap_or_default();
+            let reading_books = reading_memo::load_reading_books().unwrap_or_default();
+            let calendar_events = calendar::load_calendar_events().unwrap_or_default();
+
+            let max_id = tasks.iter().map(|t| t.id).max().unwrap_or(0);
+
             app.manage(AppState {
-                db,
                 tasks: Mutex::new(tasks),
                 groups: Mutex::new(groups),
                 next_id: Mutex::new(max_id + 1),
@@ -206,6 +175,7 @@ pub fn run() {
                 memos: Mutex::new(memos),
                 folders: Mutex::new(folders),
                 reading_books: Mutex::new(reading_books),
+                calendar_events: Mutex::new(calendar_events),
             });
 
             // Background task for notifications
@@ -280,9 +250,11 @@ pub fn run() {
                         updated
                     };
 
-                    // Save updated tasks to database
-                    for task in &tasks_to_update {
-                        let _ = database::db_save_task(&state.db, task).await;
+                    // Save updated tasks to JSON
+                    if !tasks_to_update.is_empty() {
+                        let tasks = state.tasks.lock().unwrap();
+                        let data_file = state.data_file.lock().unwrap();
+                        let _ = crate::task::save_tasks(&tasks, &data_file);
                     }
 
                     for task in tasks_to_notify {

@@ -2,7 +2,6 @@
 
 use tauri::State;
 
-use crate::database;
 use crate::memo::{Folder, Memo};
 use crate::AppState;
 
@@ -30,17 +29,17 @@ pub async fn create_memo(
     folder_id: Option<String>,
     tags: Vec<String>,
 ) -> Result<Vec<Memo>, String> {
-    let memo = {
+    let memos = {
         let mut memos = state.memos.lock().unwrap();
         let memo = Memo::new(title, content, folder_id, tags);
-        memos.push(memo.clone());
-        memo
+        memos.push(memo);
+
+        crate::memo::save_memos(&memos)?;
+
+        memos.clone()
     };
 
-    database::db_save_memo(&state.db, &memo).await?;
-
-    let memos = state.memos.lock().unwrap();
-    Ok(memos.clone())
+    Ok(memos)
 }
 
 #[tauri::command]
@@ -52,35 +51,32 @@ pub async fn update_memo(
     folder_id: Option<String>,
     tags: Vec<String>,
 ) -> Result<Vec<Memo>, String> {
-    let memo_to_save = {
+    let memos = {
         let mut memos = state.memos.lock().unwrap();
         if let Some(memo) = memos.iter_mut().find(|m| m.id == id) {
             memo.update(title, content, folder_id, tags);
-            Some(memo.clone())
-        } else {
-            None
+
+            crate::memo::save_memos(&memos)?;
         }
+
+        memos.clone()
     };
 
-    if let Some(memo) = memo_to_save {
-        database::db_save_memo(&state.db, &memo).await?;
-    }
-
-    let memos = state.memos.lock().unwrap();
-    Ok(memos.clone())
+    Ok(memos)
 }
 
 #[tauri::command]
 pub async fn delete_memo(state: State<'_, AppState>, id: String) -> Result<Vec<Memo>, String> {
-    {
+    let memos = {
         let mut memos = state.memos.lock().unwrap();
         memos.retain(|m| m.id != id);
-    }
 
-    database::db_delete_memo(&state.db, &id).await?;
+        crate::memo::save_memos(&memos)?;
 
-    let memos = state.memos.lock().unwrap();
-    Ok(memos.clone())
+        memos.clone()
+    };
+
+    Ok(memos)
 }
 
 #[tauri::command]
@@ -125,17 +121,17 @@ pub async fn create_folder(
     name: String,
     parent_id: Option<String>,
 ) -> Result<Vec<Folder>, String> {
-    let folder = {
+    let folders = {
         let mut folders = state.folders.lock().unwrap();
         let folder = Folder::new(name, parent_id);
-        folders.push(folder.clone());
-        folder
+        folders.push(folder);
+
+        crate::memo::save_folders(&folders)?;
+
+        folders.clone()
     };
 
-    database::db_save_folder(&state.db, &folder).await?;
-
-    let folders = state.folders.lock().unwrap();
-    Ok(folders.clone())
+    Ok(folders)
 }
 
 #[tauri::command]
@@ -144,27 +140,23 @@ pub async fn update_folder(
     id: String,
     name: String,
 ) -> Result<Vec<Folder>, String> {
-    let folder_to_save = {
+    let folders = {
         let mut folders = state.folders.lock().unwrap();
         if let Some(folder) = folders.iter_mut().find(|f| f.id == id) {
             folder.name = name;
-            Some(folder.clone())
-        } else {
-            None
+
+            crate::memo::save_folders(&folders)?;
         }
+
+        folders.clone()
     };
 
-    if let Some(folder) = folder_to_save {
-        database::db_save_folder(&state.db, &folder).await?;
-    }
-
-    let folders = state.folders.lock().unwrap();
-    Ok(folders.clone())
+    Ok(folders)
 }
 
 #[tauri::command]
 pub async fn delete_folder(state: State<'_, AppState>, id: String) -> Result<Vec<Folder>, String> {
-    let memos_to_update: Vec<Memo> = {
+    let (folders, _updated_memos) = {
         let mut folders = state.folders.lock().unwrap();
         let mut memos = state.memos.lock().unwrap();
 
@@ -172,24 +164,22 @@ pub async fn delete_folder(state: State<'_, AppState>, id: String) -> Result<Vec
         folders.retain(|f| f.id != id);
 
         // Remove folder_id from memos in this folder
-        let mut updated = Vec::new();
+        let mut memos_modified = false;
         for memo in memos.iter_mut() {
             if memo.folder_id.as_ref() == Some(&id) {
                 memo.folder_id = None;
-                updated.push(memo.clone());
+                memos_modified = true;
             }
         }
-        updated
+
+        crate::memo::save_folders(&folders)?;
+
+        if memos_modified {
+            crate::memo::save_memos(&memos)?;
+        }
+
+        (folders.clone(), Vec::<Memo>::new())
     };
 
-    // Delete folder from database
-    database::db_delete_folder(&state.db, &id).await?;
-
-    // Update affected memos in database
-    for memo in &memos_to_update {
-        let _ = database::db_save_memo(&state.db, memo).await;
-    }
-
-    let folders = state.folders.lock().unwrap();
-    Ok(folders.clone())
+    Ok(folders)
 }

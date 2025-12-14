@@ -27,3 +27,9 @@ pub fn load_settings(file_path: &PathBuf) -> MailSettings {
     }
     MailSettings::default()
 }
+
+pub fn save_settings(settings: &MailSettings, file_path: &PathBuf) -> Result<(), String> {
+    let json = serde_json::to_string_pretty(settings).map_err(|e| e.to_string())?;
+    fs::write(file_path, json).map_err(|e| e.to_string())?;
+    Ok(())
+}

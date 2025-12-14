@@ -49,6 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ tasks, groups, currentGroup, onSelect
             <div className={getItemClass(currentGroup === "__ALL__")} onClick={() => onSelectGroup("__ALL__")}>📋 All Tasks</div>
             <div className={getItemClass(currentGroup === "__DASHBOARD__")} onClick={() => onSelectGroup("__DASHBOARD__")}>📊 Dashboard</div>
             <div className={getItemClass(currentGroup === "__CALENDAR__")} onClick={() => onSelectGroup("__CALENDAR__")}>📅 Calendar</div>
+            <div className={getItemClass(currentGroup === "__GANTT__")} onClick={() => onSelectGroup("__GANTT__")}>💹 Gantt Chart</div>
             <div className={getItemClass(currentGroup === "__MEMOS__")} onClick={() => onSelectGroup("__MEMOS__")}>📝 Memos</div>
             <div className={getItemClass(currentGroup === "__READING_MEMOS__")} onClick={() => onSelectGroup("__READING_MEMOS__")}>📚 Reading Memos</div>
 

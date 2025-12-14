@@ -13,7 +13,7 @@
 | フレームワーク | Tauri v2 |
 | フロントエンド | React + TypeScript + Vite + Tailwind CSS |
 | バックエンド | Rust |
-| データベース | SQLite (SQLx) |
+| データベース | JSON Storage (No SQL) |
 | 通知 | Gmail SMTP (lettre) + システム通知 |
 | テーマ | CSS Variables + Tailwind Colors |
 
@@ -62,7 +62,6 @@
 | uuid | 1.18.1 | UUID生成 (v4) |
 | image | 0.25 | 画像処理（アイコン用） |
 | dirs | 6.0.0 | OSのディレクトリパス取得 |
-| sqlx | 0.8 | SQLite データベース操作 |
 
 ### Tauri 機能フラグ
 
@@ -212,7 +211,7 @@ src/
 
 ## データ保存場所
 
-アプリケーションデータは SQLite データベース (`noruno.db`) に保存されます。
+アプリケーションデータは、OS標準のデータディレクトリ内の `noruno_platform` フォルダにあるJSONファイルに保存されます。
 
 - **Windows**: `C:\Users\[UserName]\AppData\Roaming\com.noruno.platform\`
 - **Linux**: `~/.local/share/noruno_platform/`
@@ -222,9 +221,12 @@ src/
 
 | ファイル | 内容 |
 |----------|------|
-| noruno.db | メインデータベース（SQLite） |
-| .db_migrated | 移行完了フラグファイル |
-| *.json.bak | 移行前のバックアップデータ |
+| tasks.json | タスクデータ |
+| memos.json | メモデータ |
+| reading_books.json | 読書記録データ |
+| calendar_events.json | カインダーイベントデータ |
+| groups.json | タスクグループ定義 |
+| settings.json | アプリケーション設定 |
 
 ---
 
@@ -250,6 +252,6 @@ No_STRIP=true npm run tauri build
 - **2025-01**: Monokai Dimmed テーマ追加
 - **2025-12**:
   - UIを Tailwind CSS へ完全移行
-  - SQLite (SQLx) へのデータベース移行
+  - SQLite (SQLx) へのデータベース移行 (一時的対応、後にJSONへ戻しました)
   - カレンダーイベント機能の追加
   - アプリ名を "Noruno Platform" へ変更

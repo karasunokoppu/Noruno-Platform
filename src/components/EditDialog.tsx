@@ -13,6 +13,7 @@ interface EditDialogProps {
 const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, onCancel }) => {
     const [description, setDescription] = useState(task.description);
     const [date, setDate] = useState(task.due_date);
+    const [startDate, setStartDate] = useState(task.start_date || "");
     const [group, setGroup] = useState(task.group);
     const [details, setDetails] = useState(task.details);
 
@@ -23,6 +24,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, o
     const [notifyMinutes, setNotifyMinutes] = useState<string>((totalMinutes % 60).toString());
 
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showStartDatePicker, setShowStartDatePicker] = useState(false);
 
     const handleSave = () => {
         // Convert days/hours/minutes to total minutes
@@ -35,6 +37,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, o
             ...task,
             description,
             due_date: date,
+            start_date: startDate || undefined,
             group,
             details,
             notification_minutes: calculatedMinutes > 0 ? calculatedMinutes : undefined
@@ -65,6 +68,17 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, o
                             style={{ width: '100%', textAlign: 'left' }}
                         >
                             {date ? date.replace(/-/g, '/') : "Select Date"}
+                        </button>
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Start Date</label>
+                        <button
+                            className="secondary"
+                            onClick={() => setShowStartDatePicker(true)}
+                            style={{ width: '100%', textAlign: 'left' }}
+                        >
+                            {startDate ? startDate.replace(/-/g, '/') : "Select Start Date"}
                         </button>
                     </div>
 
@@ -150,6 +164,15 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, o
                         value={date}
                         onChange={setDate}
                         onClose={() => setShowDatePicker(false)}
+                    />
+                )
+            }
+            {
+                showStartDatePicker && (
+                    <CustomDatePicker
+                        value={startDate}
+                        onChange={setStartDate}
+                        onClose={() => setShowStartDatePicker(false)}
                     />
                 )
             }

@@ -28,7 +28,7 @@
 - **Core**: [Tauri v2](https://tauri.app/) (Rust)
 - **Frontend**: React, TypeScript, Vite
 - **Styling**: Tailwind CSS v4
-- **Database**: SQLite (SQLx)
+- **Database**: JSON Storage (No SQL Database)
 - **State Management**: React Hooks + Backend State
 
 ## 🚀 開発とビルド
@@ -54,4 +54,4 @@ npm run tauri build
 
 ## 📂 データ保存場所
 
-アプリケーションの設定やデータは、OS標準のデータディレクトリ内の `noruno_platform` フォルダにある `noruno.db` (SQLite) に保存されます。
+アプリケーションの設定やデータは、OS標準のデータディレクトリ内の `noruno_platform` フォルダにあるJSONファイル (`tasks.json`, `memos.json` など) に保存されます。

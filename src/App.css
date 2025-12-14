@@ -1202,15 +1202,25 @@ button.danger:hover {
 
 /* Markdown List Styles */
 .memo-preview-pane ul,
-.memo-preview-pane ol {
+.markdown-body ul {
+  list-style-type: disc;
   padding-left: 1.5em;
   margin: 0.5em 0;
 }
 
-.memo-preview-pane li {
+.memo-preview-pane ol,
+.markdown-body ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.memo-preview-pane li,
+.markdown-body li {
   margin: 0.3em 0;
   line-height: 1.6;
 }
+
 
 /* Horizontal Rule */
 .memo-preview-pane hr {
@@ -2271,6 +2281,7 @@ button.danger:hover {
   color: var(--text-secondary);
   margin-top: 8px;
 }
+
 /* Markdown Checkbox Styling */
 .memo-preview-pane ul.contains-task-list,
 .markdown-body ul.contains-task-list {

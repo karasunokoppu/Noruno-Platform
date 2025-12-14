@@ -10,6 +10,7 @@ import SettingsModal from "./components/settings";
 import MemoView from "./components/memo";
 import ReadingMemoView from "./components/reading";
 import DashboardView from "./components/dashboard";
+import GanttView from "./components/GanttView";
 
 // Reading Book interface for dashboard
 interface ReadingBook {
@@ -31,6 +32,7 @@ export interface Subtask {
 export interface Task {
   id: number;
   description: string;
+  start_date?: string;
   due_date: string;
   group: string;
   details: string;
@@ -65,9 +67,10 @@ function App() {
     setReadingBooks(loadedBooks);
   }
 
-  const handleAddTask = async (desc: string, date: string, group: string, details: string, notificationMinutes?: number) => {
+  const handleAddTask = async (desc: string, date: string, group: string, details: string, notificationMinutes?: number, startDate?: string) => {
     const newTasks = await invoke<Task[]>("add_task", {
       description: desc,
+      startDate: startDate || null,
       dueDate: date,
       group: group,
       details: details,
@@ -90,6 +93,7 @@ function App() {
     const newTasks = await invoke<Task[]>("update_task", {
       id: task.id,
       description: task.description,
+      startDate: task.start_date || null,
       dueDate: task.due_date,
       group: task.group,
       details: task.details,
@@ -163,6 +167,8 @@ function App() {
           <MemoView />
         ) : currentGroup === "__READING_MEMOS__" ? (
           <ReadingMemoView />
+        ) : currentGroup === "__GANTT__" ? (
+          <GanttView tasks={tasks} onTaskUpdate={handleUpdateTask} />
         ) : (
           <>
             <div className="input-section">
