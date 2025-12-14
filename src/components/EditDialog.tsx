@@ -6,16 +6,18 @@ import CustomDropdown from './CustomDropdown';
 interface EditDialogProps {
     task: Task;
     existingGroups: string[];
+    allTasks?: Task[]; // Make optional to avoid breaking if not passed immediately, but we passed it
     onSave: (task: Task) => void;
     onCancel: () => void;
 }
 
-const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, onCancel }) => {
+const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks = [], onSave, onCancel }) => {
     const [description, setDescription] = useState(task.description);
     const [date, setDate] = useState(task.due_date);
     const [startDate, setStartDate] = useState(task.start_date || "");
     const [group, setGroup] = useState(task.group);
     const [details, setDetails] = useState(task.details);
+    const [dependencies, setDependencies] = useState<number[]>(task.dependencies || []);
 
     // Convert task notification_minutes to days/hours/minutes for display
     const totalMinutes = task.notification_minutes || 0;
@@ -40,7 +42,18 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, o
             start_date: startDate || undefined,
             group,
             details,
-            notification_minutes: calculatedMinutes > 0 ? calculatedMinutes : undefined
+            notification_minutes: calculatedMinutes > 0 ? calculatedMinutes : undefined,
+            dependencies: dependencies.length > 0 ? dependencies : undefined,
+        });
+    };
+
+    const toggleDependency = (targetId: number) => {
+        setDependencies(prev => {
+            if (prev.includes(targetId)) {
+                return prev.filter(id => id !== targetId);
+            } else {
+                return [...prev, targetId];
+            }
         });
     };
 
@@ -60,26 +73,27 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, o
                         />
                     </div>
 
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Due Date</label>
-                        <button
-                            className="secondary"
-                            onClick={() => setShowDatePicker(true)}
-                            style={{ width: '100%', textAlign: 'left' }}
-                        >
-                            {date ? date.replace(/-/g, '/') : "Select Date"}
-                        </button>
-                    </div>
-
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Start Date</label>
-                        <button
-                            className="secondary"
-                            onClick={() => setShowStartDatePicker(true)}
-                            style={{ width: '100%', textAlign: 'left' }}
-                        >
-                            {startDate ? startDate.replace(/-/g, '/') : "Select Start Date"}
-                        </button>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Start Date</label>
+                            <button
+                                className="secondary"
+                                onClick={() => setShowStartDatePicker(true)}
+                                style={{ width: '100%', textAlign: 'left' }}
+                            >
+                                {startDate ? startDate.replace(/-/g, '/') : "Select Start Date"}
+                            </button>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Due Date</label>
+                            <button
+                                className="secondary"
+                                onClick={() => setShowDatePicker(true)}
+                                style={{ width: '100%', textAlign: 'left' }}
+                            >
+                                {date ? date.replace(/-/g, '/') : "Select Date"}
+                            </button>
+                        </div>
                     </div>
 
                     <div>
@@ -112,6 +126,35 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, onSave, o
                                 resize: 'vertical'
                             }}
                         />
+                    </div>
+
+                    {/* Dependencies Section */}
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Dependencies (Predecessors)</label>
+                        <div style={{
+                            maxHeight: '100px',
+                            overflowY: 'auto',
+                            border: '1px solid #3a3a3a',
+                            borderRadius: '6px',
+                            padding: '5px',
+                            backgroundColor: '#2a2a2a'
+                        }}>
+                            {allTasks
+                                .filter(t => t.id !== task.id) // Exclude self
+                                .map(t => (
+                                    <div key={t.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '2px' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={dependencies.includes(t.id)}
+                                            onChange={() => toggleDependency(t.id)}
+                                            style={{ marginRight: '8px' }}
+                                        />
+                                        <span style={{ fontSize: '12px', color: '#ddd' }}>{t.description}</span>
+                                    </div>
+                                ))
+                            }
+                            {allTasks.length <= 1 && <div style={{ fontSize: '12px', color: '#666', padding: '5px' }}>No other tasks available</div>}
+                        </div>
                     </div>
                 </div>
 

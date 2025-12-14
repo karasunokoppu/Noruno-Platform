@@ -37,6 +37,8 @@ pub struct Task {
     pub notification_minutes: Option<i32>,
     #[serde(default)]
     pub subtasks: Vec<Subtask>,
+    #[serde(default)]
+    pub dependencies: Option<Vec<i32>>,
 }
 
 impl Task {

@@ -73,21 +73,21 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, existingGroups }) => {
             <div className={`flex flex-col gap-2.5 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-[500px] opacity-100 mt-2.5" : "max-h-0 opacity-0"}`}>
                 <div className="flex gap-2.5">
                     <div className="flex-1 flex flex-col gap-1">
-                        <label className="text-xs text-text-secondary">Due Date</label>
-                        <button
-                            className={`${buttonClass} ${secondaryButtonClass} border border-border-primary w-full text-left`}
-                            onClick={() => setShowDatePicker(true)}
-                        >
-                            {date ? date.replace(/-/g, '/') : "Select Due Date"}
-                        </button>
-                    </div>
-                    <div className="flex-1 flex flex-col gap-1">
                         <label className="text-xs text-text-secondary">Start Date</label>
                         <button
                             className={`${buttonClass} ${secondaryButtonClass} border border-border-primary w-full text-left`}
                             onClick={() => setShowStartDatePicker(true)}
                         >
                             {startDate ? startDate.replace(/-/g, '/') : "Select Start Date"}
+                        </button>
+                    </div>
+                    <div className="flex-1 flex flex-col gap-1">
+                        <label className="text-xs text-text-secondary">Due Date</label>
+                        <button
+                            className={`${buttonClass} ${secondaryButtonClass} border border-border-primary w-full text-left`}
+                            onClick={() => setShowDatePicker(true)}
+                        >
+                            {date ? date.replace(/-/g, '/') : "Select Due Date"}
                         </button>
                     </div>
                 </div>

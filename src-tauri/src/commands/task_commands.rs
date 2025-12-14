@@ -27,6 +27,7 @@ pub async fn add_task(
     group: String,
     details: String,
     notification_minutes: Option<i32>,
+    dependencies: Option<Vec<i32>>,
 ) -> Result<Vec<Task>, String> {
     let tasks = {
         let mut tasks = state.tasks.lock().unwrap();
@@ -43,6 +44,7 @@ pub async fn add_task(
             notified: false,
             notification_minutes,
             subtasks: Vec::new(),
+            dependencies,
         };
 
         *next_id += 1;
@@ -68,6 +70,7 @@ pub async fn update_task(
     group: String,
     details: String,
     notification_minutes: Option<i32>,
+    dependencies: Option<Vec<i32>>,
 ) -> Result<Vec<Task>, String> {
     let tasks = {
         let mut tasks = state.tasks.lock().unwrap();
@@ -83,6 +86,7 @@ pub async fn update_task(
             task.group = group;
             task.details = details;
             task.notification_minutes = notification_minutes;
+            task.dependencies = dependencies;
 
             // Reset notified flag if relevant fields changed
             if due_date_changed || notification_changed {

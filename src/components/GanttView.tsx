@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { ViewMode, Gantt, Task as GanttTask, EventOption } from "gantt-task-react";
+import { ViewMode, Gantt, Task as GanttTask } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import { Task } from "../App";
+
 
 interface GanttViewProps {
     tasks: Task[];
     onTaskUpdate: (task: Task) => void;
 }
 
+type SortOption = "default" | "startDate" | "dueDate" | "name";
+
 const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
     const [ganttTasks, setGanttTasks] = useState<GanttTask[]>([]);
     const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Day);
+    const [sortOption, setSortOption] = useState<SortOption>("default");
 
     useEffect(() => {
-        const newGanttTasks: GanttTask[] = tasks.map((task) => {
-            // Use start_date if available, otherwise default to now or create date logic
-            // Ideally, we need a start date. If missing, maybe use due_date - 1 day?
-            // For now, let's assume due_date is end, and start is today or existing start_date.
+        let newGanttTasks: GanttTask[] = tasks.map((task) => {
+            let endDate = new Date(task.due_date);
+            // Handle invalid end date (e.g. empty string)
+            if (isNaN(endDate.getTime())) {
+                endDate = new Date(); // Default to now if invalid
+            }
 
-            const endDate = new Date(task.due_date);
             let startDate = new Date();
             if (task.start_date) {
-                startDate = new Date(task.start_date);
+                const parsedStart = new Date(task.start_date);
+                if (!isNaN(parsedStart.getTime())) {
+                    startDate = parsedStart;
+                }
             } else {
-                // Default start to 1 hour before end if only due date exists, or simply now.
-                // If end date is in future, start is now.
-                // If end date is past, start is 1 day before end.
                 if (endDate > new Date()) {
                     startDate = new Date();
                 } else {
@@ -33,10 +38,21 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
                 }
             }
 
-            // Ensure start < end
             if (startDate >= endDate) {
                 startDate = new Date(endDate.getTime() - 60 * 60 * 1000);
             }
+
+            // Calculate progress based on subtasks
+            let progress = 0;
+            if (task.subtasks && task.subtasks.length > 0) {
+                const completedCount = task.subtasks.filter(s => s.completed).length;
+                progress = Math.round((completedCount / task.subtasks.length) * 100);
+            } else {
+                progress = task.completed ? 100 : 0;
+            }
+
+            // Map dependencies (number[] -> string[])
+            const dependencies = task.dependencies?.map(d => d.toString());
 
             return {
                 start: startDate,
@@ -44,47 +60,36 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
                 name: task.description,
                 id: task.id.toString(),
                 type: "task",
-                progress: task.completed ? 100 : 0,
+                progress: progress,
                 isDisabled: false,
                 styles: { progressColor: "#ffbb54", progressSelectedColor: "#ff9e0d" },
+                dependencies: dependencies,
             };
         });
 
-        // Check if we have tasks. If 0, we can't render Gantt correctly usually without dummy
+        // Sorting
+        if (sortOption === "startDate") {
+            newGanttTasks.sort((a, b) => a.start.getTime() - b.start.getTime());
+        } else if (sortOption === "dueDate") {
+            newGanttTasks.sort((a, b) => a.end.getTime() - b.end.getTime());
+        } else if (sortOption === "name") {
+            newGanttTasks.sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+            // Default: ID
+            newGanttTasks.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+        }
+
         if (newGanttTasks.length > 0) {
             setGanttTasks(newGanttTasks);
         } else {
             setGanttTasks([]);
         }
-    }, [tasks]);
-
-    const handleTaskChange = (task: GanttTask) => {
-        // Find original task
-        const originalTask = tasks.find((t) => t.id.toString() === task.id);
-        if (originalTask) {
-            // Update dates
-            // Note: Gantt library updates start/end in local time Date objects
-
-            // Format to string YYYY-MM-DD HH:MM
-            // Helper to format
-            const format = (d: Date) => d.toISOString(); // Or localized format expected by backend
-
-            // For now, let's keep simplistic and just log or pseudo-update
-            // To really update, we need to convert back to the string format our backend expects
-            // Backend expects naive strings effectively or depends on parsing.
-
-            // Let's rely on simple string conversion for MVP
-            // In reality we should format carefully matching backend expectations
-        }
-    };
+    }, [tasks, sortOption]);
 
     const onDateChange = (task: GanttTask) => {
         const originalTask = tasks.find((t) => t.id.toString() === task.id);
         if (originalTask) {
-            const newStart = task.start.toISOString();
-            // We likely want YYYY-MM-DD or YYYY-MM-DD HH:MM depending on backend
-            // Backend uses String. task_commands.rs parses using %Y-%m-%d %H:%M or %Y-%m-%d
-
+            // ... (keeping existing date logic)
             const formatDate = (date: Date) => {
                 const yyyy = date.getFullYear();
                 const mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -106,24 +111,39 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
 
     return (
         <div className="p-4 bg-bg-primary h-full overflow-auto">
-            <div className="mb-4 flex gap-2">
-                <button className="px-3 py-1 bg-bg-secondary rounded border border-border-primary text-text-primary" onClick={() => setViewMode(ViewMode.Day)}>Day</button>
-                <button className="px-3 py-1 bg-bg-secondary rounded border border-border-primary text-text-primary" onClick={() => setViewMode(ViewMode.Week)}>Week</button>
-                <button className="px-3 py-1 bg-bg-secondary rounded border border-border-primary text-text-primary" onClick={() => setViewMode(ViewMode.Month)}>Month</button>
+            <div className="mb-4 flex gap-4 items-center justify-between">
+                <div className="flex gap-2">
+                    <button className={`px-3 py-1 rounded border border-border-primary text-text-primary ${viewMode === ViewMode.Day ? 'bg-accent-primary' : 'bg-bg-secondary'}`} onClick={() => setViewMode(ViewMode.Day)}>Day</button>
+                    <button className={`px-3 py-1 rounded border border-border-primary text-text-primary ${viewMode === ViewMode.Week ? 'bg-accent-primary' : 'bg-bg-secondary'}`} onClick={() => setViewMode(ViewMode.Week)}>Week</button>
+                    <button className={`px-3 py-1 rounded border border-border-primary text-text-primary ${viewMode === ViewMode.Month ? 'bg-accent-primary' : 'bg-bg-secondary'}`} onClick={() => setViewMode(ViewMode.Month)}>Month</button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <label className="text-text-secondary text-sm">Sort:</label>
+                    <select
+                        className="bg-bg-secondary text-text-primary border border-border-primary rounded p-1 text-sm"
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value as SortOption)}
+                    >
+                        <option value="default">Default</option>
+                        <option value="startDate">Start Date</option>
+                        <option value="dueDate">Due Date</option>
+                        <option value="name">Name</option>
+                    </select>
+                </div>
             </div>
             {ganttTasks.length > 0 ? (
                 <Gantt
                     tasks={ganttTasks}
                     viewMode={viewMode}
                     onDateChange={onDateChange}
-                    // onProgressChange={handleProgressChange} // If we want to support progress drag
-                    // onDoubleClick={handleDblClick}
-                    // onDelete={handleDelete}
                     listCellWidth="155px"
                     columnWidth={60}
+                    barFill={60}
+                    ganttHeight={500}
                 />
             ) : (
-                <div className="text-text-secondary">No tasks to display</div>
+                <div className="text-text-secondary mt-10 text-center">No tasks to display</div>
             )}
         </div>
     );

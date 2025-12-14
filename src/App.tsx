@@ -39,6 +39,7 @@ export interface Task {
   completed: boolean;
   notification_minutes?: number;
   subtasks: Subtask[];
+  dependencies?: number[];
 }
 
 function App() {
@@ -75,6 +76,7 @@ function App() {
       group: group,
       details: details,
       notificationMinutes: notificationMinutes || null,
+      dependencies: null,
     });
     setTasks(newTasks);
   };
@@ -98,6 +100,7 @@ function App() {
       group: task.group,
       details: task.details,
       notificationMinutes: task.notification_minutes || null,
+      dependencies: task.dependencies || null,
     });
     setTasks(newTasks);
     setEditingTask(null);
@@ -193,6 +196,7 @@ function App() {
         <EditDialog
           task={editingTask}
           existingGroups={groups}
+          allTasks={tasks}
           onSave={handleSaveTask}
           onCancel={() => setEditingTask(null)}
         />
