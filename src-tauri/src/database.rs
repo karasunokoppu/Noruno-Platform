@@ -799,6 +799,50 @@ pub async fn db_load_calendar_events(pool: &SqlitePool) -> Result<Vec<CalendarEv
     Ok(events)
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::tests::test_utils::setup_test_db;
+
+    #[tokio::test]
+    async fn test_init_db() {
+        let test_db = setup_test_db().await;
+        // Check if connection is alive and tables are created
+        let row: (i32,) = sqlx::query_as("SELECT 1")
+            .fetch_one(&test_db.pool)
+            .await
+            .expect("Failed to execute query");
+        assert_eq!(row.0, 1);
+    }
+
+    #[tokio::test]
+    async fn test_migrations_applied() {
+        let test_db = setup_test_db().await;
+
+        // Check if tables exist
+        let tables = [
+            "tasks",
+            "groups",
+            "settings",
+            "memos",
+            "folders",
+            "reading_books",
+            "calendar_events",
+        ];
+        for table in tables {
+            let exists: (i32,) = sqlx::query_as(&format!(
+                "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='{}'",
+                table
+            ))
+            .fetch_one(&test_db.pool)
+            .await
+            .expect("Failed to check table existence");
+
+            assert_eq!(exists.0, 1, "Table {} does not exist", table);
+        }
+    }
+}
+
 /// イベントを保存
 pub async fn db_save_calendar_event(
     pool: &SqlitePool,

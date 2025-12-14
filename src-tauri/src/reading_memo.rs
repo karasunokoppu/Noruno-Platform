@@ -189,3 +189,73 @@ pub fn load_reading_books() -> Result<Vec<ReadingBook>, String> {
 
     serde_json::from_str(&contents).map_err(|e| format!("Failed to parse reading_books: {}", e))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::database::{db_delete_reading_book, db_load_reading_books, db_save_reading_book};
+    use crate::tests::test_utils::setup_test_db;
+    use chrono::Utc;
+
+    #[tokio::test]
+    async fn test_reading_book_crud() {
+        let test_db = setup_test_db().await;
+        let pool = &test_db.pool;
+
+        // Create
+        let book = ReadingBook {
+            id: "book-1".to_string(),
+            title: "Test Book".to_string(),
+            author: Some("Author".to_string()),
+            isbn: None,
+            publisher: None,
+            published_year: None,
+            cover_image_url: None,
+            genres: vec![],
+            status: ReadingStatus::WantToRead,
+            start_date: None,
+            finish_date: None,
+            progress_percent: None,
+            total_pages: None,
+            current_page: None,
+            rating: None,
+            summary: "Summary".to_string(),
+            notes: vec![],
+            reading_sessions: vec![],
+            tags: vec![],
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
+        };
+        db_save_reading_book(pool, &book)
+            .await
+            .expect("Failed to save book");
+
+        // Read
+        let books = db_load_reading_books(pool)
+            .await
+            .expect("Failed to load books");
+        assert_eq!(books.len(), 1);
+        assert_eq!(books[0].title, "Test Book");
+
+        // Update
+        let mut book = books[0].clone();
+        book.status = ReadingStatus::Reading;
+        db_save_reading_book(pool, &book)
+            .await
+            .expect("Failed to update book");
+
+        let books = db_load_reading_books(pool)
+            .await
+            .expect("Failed to load books");
+        assert_eq!(books[0].status, ReadingStatus::Reading);
+
+        // Delete
+        db_delete_reading_book(pool, "book-1")
+            .await
+            .expect("Failed to delete book");
+        let books = db_load_reading_books(pool)
+            .await
+            .expect("Failed to load books");
+        assert!(books.is_empty());
+    }
+}

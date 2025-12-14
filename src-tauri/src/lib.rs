@@ -21,6 +21,8 @@ mod notification;
 mod reading_memo;
 mod settings;
 mod task;
+#[cfg(test)]
+pub mod tests;
 
 // 再エクスポート
 use mail::send_email;

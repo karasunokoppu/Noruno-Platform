@@ -99,3 +99,53 @@ pub fn load_folders() -> Result<Vec<Folder>, String> {
 
     serde_json::from_str(&contents).map_err(|e| format!("Failed to parse folders: {}", e))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::database::{db_delete_memo, db_load_memos, db_save_memo};
+    use crate::tests::test_utils::setup_test_db;
+    use chrono::Utc;
+
+    #[tokio::test]
+    async fn test_memo_crud() {
+        let test_db = setup_test_db().await;
+        let pool = &test_db.pool;
+
+        // Create
+        let memo = Memo {
+            id: "memo-1".to_string(),
+            title: "Test Memo".to_string(),
+            content: "Content".to_string(),
+            folder_id: None,
+            tags: vec!["tag1".to_string()],
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
+        };
+        db_save_memo(pool, &memo)
+            .await
+            .expect("Failed to save memo");
+
+        // Read
+        let memos = db_load_memos(pool).await.expect("Failed to load memos");
+        assert_eq!(memos.len(), 1);
+        assert_eq!(memos[0].title, "Test Memo");
+
+        // Update
+        let mut memo = memos[0].clone();
+        memo.title = "Updated Memo".to_string();
+        db_save_memo(pool, &memo)
+            .await
+            .expect("Failed to update memo");
+
+        let memos = db_load_memos(pool).await.expect("Failed to load memos");
+        assert_eq!(memos[0].title, "Updated Memo");
+
+        // Delete
+        db_delete_memo(pool, "memo-1")
+            .await
+            .expect("Failed to delete memo");
+        let memos = db_load_memos(pool).await.expect("Failed to load memos");
+        assert!(memos.is_empty());
+    }
+}
