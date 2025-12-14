@@ -12,9 +12,7 @@ pub async fn init_db(data_dir: &PathBuf) -> Result<SqlitePool, String> {
     }
 
     let db_path = data_dir.join("noruno.db");
-    // Windows path handling: ensure we use forward slashes for the URL
-    let db_path_str = db_path.to_string_lossy().replace('\\', "/");
-    let db_url = format!("sqlite:{}?mode=rwc", db_path_str);
+    let db_url = format!("sqlite:{}?mode=rwc", db_path.display());
 
     // 接続プールを作成
     let pool = SqlitePoolOptions::new()
@@ -46,16 +44,10 @@ async fn run_migrations(pool: &SqlitePool) -> Result<(), String> {
     ];
 
     for sql in migrations {
-        // Split by semicolon to handle multiple statements
-        for statement in sql.split(';') {
-            let statement = statement.trim();
-            if !statement.is_empty() {
-                sqlx::raw_sql(statement)
-                    .execute(pool)
-                    .await
-                    .map_err(|e| format!("Migration failed: {}", e))?;
-            }
-        }
+        sqlx::raw_sql(sql)
+            .execute(pool)
+            .await
+            .map_err(|e| format!("Migration failed: {}", e))?;
     }
 
     Ok(())
