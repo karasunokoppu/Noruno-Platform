@@ -58,7 +58,7 @@ const TaskRow: React.FC<TaskRowProps> = ({ task, onDelete, onComplete, onEdit, o
 
                 <div className="flex gap-2">
                     <button className={editBtnClass} onClick={() => onEdit(task)}>Edit</button>
-                    <button className={deleteBtnClass} onClick={() => onDelete(task.id)}>Delete</button>
+                    <button className={`${deleteBtnClass} task-delete`} onClick={() => onDelete(task.id)}>Delete</button>
                 </div>
             </div>
 

@@ -25,6 +25,7 @@ const FolderTree: React.FC<FolderTreeProps> = ({
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, folderId: string | null } | null>(null);
     const [newFolderName, setNewFolderName] = useState('');
     const [showNewFolderInput, setShowNewFolderInput] = useState(false);
+    const [newFolderParentId, setNewFolderParentId] = useState<string | null>(null);
 
     const handleContextMenu = (e: React.MouseEvent, folderId: string | null) => {
         e.preventDefault();
@@ -33,9 +34,10 @@ const FolderTree: React.FC<FolderTreeProps> = ({
 
     const handleCreateFolder = () => {
         if (newFolderName.trim()) {
-            onCreateFolder(newFolderName, contextMenu?.folderId || null);
+            onCreateFolder(newFolderName, newFolderParentId ?? null);
             setNewFolderName('');
             setShowNewFolderInput(false);
+            setNewFolderParentId(null);
             setContextMenu(null);
         }
     };
@@ -82,7 +84,7 @@ const FolderTree: React.FC<FolderTreeProps> = ({
         <div className="folder-tree">
             <div className="folder-tree-header">
                 <h3>Folders</h3>
-                <button onClick={() => setShowNewFolderInput(true)}>+</button>
+                    <button onClick={() => { setNewFolderParentId(null); setShowNewFolderInput(true); }}>+</button>
             </div>
             <div
                 className={`folder-item h-full ${selectedFolder === null ? 'selected' : ''}`}
@@ -117,7 +119,7 @@ const FolderTree: React.FC<FolderTreeProps> = ({
                     style={{ position: 'fixed', left: contextMenu.x, top: contextMenu.y }}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div onClick={() => { setShowNewFolderInput(true); setContextMenu(null); }}>New Subfolder</div>
+                    <div onClick={() => { setNewFolderParentId(contextMenu.folderId || null); setShowNewFolderInput(true); setContextMenu(null); }}>New Subfolder</div>
                     {contextMenu.folderId && (
                         <>
                             <div onClick={handleRename}>Rename</div>

@@ -1498,6 +1498,17 @@ button.danger:hover {
   background-color: var(--danger-hover) !important;
 }
 
+/* Task-specific delete button override */
+.task-delete {
+  background-color: var(--danger) !important; /* softer red */
+  color: white !important;
+  border: none;
+}
+
+.task-delete:hover {
+  background-color: var(--danger-hover) !important; /* slightly stronger on hover */
+}
+
 .detail-content {
   flex: 1;
 }
