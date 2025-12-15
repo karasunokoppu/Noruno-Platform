@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ViewMode, Gantt, Task as GanttTask } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import { Task } from "../App";
+import CustomDropdown from './CustomDropdown';
 
 
 interface GanttViewProps {
@@ -110,7 +111,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
     }
 
     return (
-        <div className="p-4 bg-bg-primary h-full overflow-auto">
+        <div className="p-4 bg-bg-primary h-full overflow-auto gantt-theme">
             <div className="mb-4 flex gap-4 items-center justify-between">
                 <div className="flex gap-2">
                     <button className={`px-3 py-1 rounded border border-border-primary text-text-primary ${viewMode === ViewMode.Day ? 'bg-accent-primary' : 'bg-bg-secondary'}`} onClick={() => setViewMode(ViewMode.Day)}>Day</button>
@@ -120,16 +121,18 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
 
                 <div className="flex items-center gap-2">
                     <label className="text-text-secondary text-sm">Sort:</label>
-                    <select
-                        className="bg-bg-secondary text-text-primary border border-border-primary rounded p-1 text-sm"
+                    <CustomDropdown
                         value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value as SortOption)}
-                    >
-                        <option value="default">Default</option>
-                        <option value="startDate">Start Date</option>
-                        <option value="dueDate">Due Date</option>
-                        <option value="name">Name</option>
-                    </select>
+                        onChange={(v) => setSortOption(v as SortOption)}
+                        options={[
+                            { value: 'default', label: 'Default' },
+                            { value: 'startDate', label: 'Start Date' },
+                            { value: 'dueDate', label: 'Due Date' },
+                            { value: 'name', label: 'Name' },
+                        ]}
+                        placeholder="Sort..."
+                        style={{ minWidth: 140 }}
+                    />
                 </div>
             </div>
             {ganttTasks.length > 0 ? (

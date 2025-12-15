@@ -1509,6 +1509,47 @@ button.danger:hover {
   background-color: var(--danger-hover) !important; /* slightly stronger on hover */
 }
 
+/* Gantt theme overrides: scope under .gantt-theme to avoid global leakage */
+.gantt-theme ._3T42e {
+  background: var(--bg-secondary) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+.gantt-theme ._2dZTy {
+  fill: var(--bg-primary) !important;
+}
+
+.gantt-theme ._35nLX {
+  fill: var(--bg-secondary) !important;
+  stroke: var(--border-primary) !important;
+}
+
+.gantt-theme ._34SS0:nth-of-type(even) {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Generic SVG/rect fallback to color the chart grid */
+.gantt-theme svg,
+.gantt-theme rect,
+.gantt-theme g {
+  background: transparent !important;
+}
+
+/* Text colors inside gantt */
+.gantt-theme svg text,
+.gantt-theme svg tspan,
+/* Specific gantt text classes (from gantt-task-react dist CSS) - only change text fill/color */
+.gantt-theme ._9w8d5,
+.gantt-theme ._2q1Kt,
+.gantt-theme ._3KcaM,
+.gantt-theme ._29NTg,
+.gantt-theme ._3zRJQ {
+  fill: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+  stroke: none !important;
+}
+
 .detail-content {
   flex: 1;
 }
