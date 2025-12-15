@@ -1550,6 +1550,11 @@ button.danger:hover {
   stroke: none !important;
 }
 
+.gantt-task-list-item {
+  white-space: normal;
+}
+
+
 .detail-content {
   flex: 1;
 }

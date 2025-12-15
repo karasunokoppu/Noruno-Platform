@@ -137,13 +137,14 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
             </div>
             {ganttTasks.length > 0 ? (
                 <Gantt
+                    locale="ja"
                     tasks={ganttTasks}
                     viewMode={viewMode}
                     onDateChange={onDateChange}
                     listCellWidth="155px"
                     columnWidth={60}
                     barFill={60}
-                    ganttHeight={500}
+                    ganttHeight={700}
                 />
             ) : (
                 <div className="text-text-secondary mt-10 text-center">No tasks to display</div>
