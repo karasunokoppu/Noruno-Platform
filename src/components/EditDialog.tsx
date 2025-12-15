@@ -132,7 +132,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                     <div>
                         <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Dependencies (Predecessors)</label>
                         <div style={{
-                            maxHeight: '100px',
+                            maxHeight: '200px',
                             overflowY: 'auto',
                             border: '1px solid #3a3a3a',
                             borderRadius: '6px',
@@ -149,7 +149,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                                             onChange={() => toggleDependency(t.id)}
                                             style={{ marginRight: '8px' }}
                                         />
-                                        <span style={{ fontSize: '12px', color: '#ddd' }}>{t.description}</span>
+                                        <span style={{ fontSize: '12px', color: '#ddd' }}>{t.group ? `${t.group}: ${t.description}` : t.description}</span>
                                     </div>
                                 ))
                             }

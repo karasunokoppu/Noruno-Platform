@@ -588,7 +588,7 @@ button.danger:hover {
   background-color: var(--bg-secondary);
   padding: 25px;
   border-radius: 12px;
-  width: 400px;
+  width: 600px;
   box-shadow: 0 10px 25px var(--shadow-strong);
   border: 1px solid var(--border-secondary);
 }
