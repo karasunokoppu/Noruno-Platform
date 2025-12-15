@@ -42,8 +42,8 @@ describe('GanttView', () => {
             group: 'Work',
             details: '',
             completed: false,
-            notified: false,
-            notification_minutes: null,
+            // notified: false, // Removed as it is not in Task interface
+            // notification_minutes: undefined, // undefined is optional, so we can just omit it or set it to undefined
             subtasks: []
         }
     ];

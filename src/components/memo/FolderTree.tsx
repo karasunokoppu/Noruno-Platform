@@ -85,13 +85,16 @@ const FolderTree: React.FC<FolderTreeProps> = ({
                 <button onClick={() => setShowNewFolderInput(true)}>+</button>
             </div>
             <div
-                className={`folder-item ${selectedFolder === null ? 'selected' : ''}`}
+                className={`folder-item h-full ${selectedFolder === null ? 'selected' : ''}`}
                 onClick={() => onSelectFolder(null)}
                 onContextMenu={(e) => handleContextMenu(e, null)}
             >
                 📂 All Memos
             </div>
-            {buildTree(null).map(folder => renderFolder(folder))}
+            <div className='folder-item-list'>
+                {buildTree(null).map(folder => renderFolder(folder))}
+            </div>
+            
 
             {showNewFolderInput && (
                 <div className="new-folder-input">

@@ -15,8 +15,8 @@ describe('TaskRow', () => {
         group: 'Test Group',
         details: 'Some detauls',
         completed: false,
-        notified: false,
-        notification_minutes: null,
+        // notified: false, // Removed as it is not in Task interface
+        // notification_minutes: undefined, // undefined is optional
         subtasks: []
     };
 
