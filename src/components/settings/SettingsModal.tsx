@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import pkg from '../../../package.json';
 import CustomDropdown from '../CustomDropdown';
 
 interface MailSettings {
@@ -21,6 +22,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
         notification_minutes: 1440  // Default: 1 day
     });
     const [status, setStatus] = useState<string>('');
+    const appVersion = (pkg as any).version || '';
 
     // Helper state for UI (days, hours, minutes)
     const [notifyDays, setNotifyDays] = useState<string>('1');
@@ -224,6 +226,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                         <button onClick={onClose} style={{ marginRight: '10px', backgroundColor: '#666' }}>Close</button>
                         <button onClick={handleSave} style={{ backgroundColor: '#4CAF50' }}>Save</button>
                     </div>
+                </div>
+                <div style={{ marginTop: '8px', textAlign: 'right', color: '#999', fontSize: '12px' }}>
+                    Version: {appVersion}
                 </div>
             </div>
         </div>
