@@ -200,6 +200,54 @@ pub async fn delete_group(state: State<'_, AppState>, name: String) -> Result<Ve
     Ok(groups)
 }
 
+#[tauri::command]
+pub async fn rename_group(
+    state: State<'_, AppState>,
+    old_name: String,
+    new_name: String,
+) -> Result<(Vec<String>, Vec<Task>), String> {
+    let (groups_clone, tasks_clone) = {
+        let mut groups = state.groups.lock().unwrap();
+        let mut tasks = state.tasks.lock().unwrap();
+
+        // Basic validation
+        let new_trim = new_name.trim();
+        if new_trim.is_empty() {
+            return Err("New group name cannot be empty".to_string());
+        }
+        if groups.contains(&new_trim.to_string()) {
+            return Err("A group with the new name already exists".to_string());
+        }
+
+        if let Some(pos) = groups.iter().position(|g| *g == old_name) {
+            groups[pos] = new_trim.to_string();
+
+            // Update tasks that referenced the old group
+            let mut tasks_modified = false;
+            for task in tasks.iter_mut() {
+                if task.group == old_name {
+                    task.group = new_trim.to_string();
+                    tasks_modified = true;
+                }
+            }
+
+            // Save groups
+            let groups_file = state.groups_file.lock().unwrap();
+            crate::task::save_groups(&groups, &groups_file)?;
+
+            // Save tasks if modified
+            if tasks_modified {
+                let data_file = state.data_file.lock().unwrap();
+                crate::task::save_tasks(&tasks, &data_file)?;
+            }
+        }
+
+        (groups.clone(), tasks.clone())
+    };
+
+    Ok((groups_clone, tasks_clone))
+}
+
 // ========================================
 // メール設定関連コマンド
 // ========================================

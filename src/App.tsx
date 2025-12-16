@@ -123,6 +123,22 @@ function App() {
     }
   };
 
+  const handleRenameGroup = async (oldName: string, newName: string) => {
+    try {
+      const res = await invoke<any>("rename_group", { oldName, newName });
+      // The backend returns a tuple [groups, tasks]
+      if (Array.isArray(res)) {
+        const newGroups = res[0] as string[];
+        const newTasks = res[1] as Task[];
+        if (newGroups) setGroups(newGroups);
+        if (newTasks) setTasks(newTasks);
+        if (currentGroup === oldName) setCurrentGroup(newName);
+      }
+    } catch (err) {
+      alert("グループ名の変更に失敗しました: " + (err as any)?.toString?.());
+    }
+  };
+
   const handleSaveTask = async (task: Task) => {
     if (task.id === 0) {
       // New task
@@ -144,6 +160,7 @@ function App() {
           onSelectGroup={setCurrentGroup}
           onAddGroup={handleAddGroup}
           onDeleteGroup={handleDeleteGroup}
+          onRenameGroup={handleRenameGroup}
           onOpenSettings={() => setShowSettings(true)}
         />
       </div>

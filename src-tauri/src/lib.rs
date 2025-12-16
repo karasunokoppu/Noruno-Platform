@@ -45,6 +45,7 @@ use commands::{
     // メモ関連
     create_folder,
     create_group,
+    rename_group,
     create_memo,
     create_reading_book,
     delete_calendar_event,
@@ -291,6 +292,7 @@ pub fn run() {
             get_tasks,
             get_groups,
             create_group,
+            rename_group,
             delete_group,
             add_task,
             update_task,
