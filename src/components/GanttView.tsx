@@ -18,7 +18,15 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
     const [sortOption, setSortOption] = useState<SortOption>("default");
 
     useEffect(() => {
-        let newGanttTasks: GanttTask[] = tasks.map((task) => {
+        // Only include tasks that have both start_date and due_date set and are valid dates
+        const filtered = tasks.filter(t => {
+            if (!t.start_date || !t.due_date) return false;
+            const s = new Date(t.start_date);
+            const e = new Date(t.due_date);
+            return !isNaN(s.getTime()) && !isNaN(e.getTime());
+        });
+
+        let newGanttTasks: GanttTask[] = filtered.map((task) => {
             let endDate = new Date(task.due_date);
             // Handle invalid end date (e.g. empty string)
             if (isNaN(endDate.getTime())) {
@@ -144,7 +152,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
                     listCellWidth="155px"
                     columnWidth={60}
                     barFill={60}
-                    ganttHeight={700}
+                    // ganttHeight={700}
                 />
             ) : (
                 <div className="text-text-secondary mt-10 text-center">No tasks to display</div>
