@@ -53,9 +53,11 @@
   --text-disabled: #666;
   --border-primary: #3a3a3a;
   --border-secondary: #444;
-  --accent-primary: #646cff;
-  --accent-hover: #535bf2;
-  --accent-light: rgba(100, 108, 255, 0.1);
+  --accent-primary: #4b54d9;
+  --accent-hover: #4348d0;
+  --accent-light: rgba(75, 84, 217, 0.12);
+  --text-on-accent: #ffffff;
+  --text-outline: rgba(0,0,0,0.6);
   --danger: #ff4a4a;
   --danger-hover: #ff2a2a;
   --shadow: rgba(0, 0, 0, 0.2);
@@ -76,9 +78,11 @@
   --text-disabled: #999;
   --border-primary: #ccc;
   --border-secondary: #bbb;
-  --accent-primary: #4a5fbf;
-  --accent-hover: #3a4faf;
-  --accent-light: rgba(74, 95, 191, 0.1);
+  --accent-primary: #394f9a;
+  --accent-hover: #2f4180;
+  --accent-light: rgba(57, 79, 154, 0.10);
+  --text-on-accent: #111111;
+  --text-outline: rgba(255,255,255,0.8);
   --danger: #d32f2f;
   --danger-hover: #c62828;
   --shadow: rgba(0, 0, 0, 0.1);
@@ -99,9 +103,10 @@
   --text-disabled: #888888;
   --border-primary: #00ff00;
   --border-secondary: #00ffff;
-  --accent-primary: #ff1493;
-  --accent-hover: #ff69b4;
-  --accent-light: rgba(255, 20, 147, 0.2);
+  --accent-primary: #e01282;
+  --accent-hover: #d10e76;
+  --accent-light: rgba(224, 18, 130, 0.18);
+  --text-on-accent: #ffffff;
   --danger: #ff0000;
   --danger-hover: #dd0000;
   --shadow: rgba(0, 255, 0, 0.3);
@@ -122,9 +127,10 @@
   --text-disabled: #565f89;
   --border-primary: #414868;
   --border-secondary: #565f89;
-  --accent-primary: #7aa2f7;
-  --accent-hover: #5a82d7;
-  --accent-light: rgba(122, 162, 247, 0.1);
+  --accent-primary: #5f86d8;
+  --accent-hover: #4f6fc0;
+  --accent-light: rgba(95, 134, 216, 0.10);
+  --text-on-accent: #ffffff;
   --danger: #f7768e;
   --danger-hover: #d7566e;
   --shadow: rgba(0, 0, 0, 0.3);
@@ -145,9 +151,10 @@
   --text-disabled: #707a8c;
   --border-primary: #4c566a;
   --border-secondary: #5e6c84;
-  --accent-primary: #88c0d0;
-  --accent-hover: #6fb3c0;
-  --accent-light: rgba(136, 192, 208, 0.1);
+  --accent-primary: #669fb0;
+  --accent-hover: #548b96;
+  --accent-light: rgba(102, 159, 176, 0.10);
+  --text-on-accent: #ffffff;
   --danger: #bf616a;
   --danger-hover: #a54f58;
   --shadow: rgba(0, 0, 0, 0.3);
@@ -168,9 +175,10 @@
   --text-disabled: #707060;
   --border-primary: #44475a;
   --border-secondary: #6272a4;
-  --accent-primary: #bd93f9;
-  --accent-hover: #a882e8;
-  --accent-light: rgba(189, 147, 249, 0.1);
+  --accent-primary: #8f66d4;
+  --accent-hover: #7a57b8;
+  --accent-light: rgba(143, 102, 212, 0.10);
+  --text-on-accent: #ffffff;
   --danger: #ff5555;
   --danger-hover: #e84444;
   --shadow: rgba(0, 0, 0, 0.4);
@@ -191,9 +199,10 @@
   --text-disabled: #75715e;
   --border-primary: #49483e;
   --border-secondary: #6a695e;
-  --accent-primary: #a6e22e;
-  --accent-hover: #8fcb1f;
-  --accent-light: rgba(166, 226, 46, 0.1);
+  --accent-primary: #7bb41d;
+  --accent-hover: #6aa216;
+  --accent-light: rgba(123, 180, 29, 0.10);
+  --text-on-accent: #ffffff;
   --danger: #f92672;
   --danger-hover: #e01562;
   --shadow: rgba(0, 0, 0, 0.4);
@@ -214,9 +223,10 @@
   --text-disabled: #555555;
   --border-primary: #3a3a3a;
   --border-secondary: #505050;
-  --accent-primary: #4169e1;
-  --accent-hover: #3355c4;
-  --accent-light: rgba(65, 105, 225, 0.15);
+  --accent-primary: #324fb8;
+  --accent-hover: #2a43a0;
+  --accent-light: rgba(50, 79, 184, 0.12);
+  --text-on-accent: #ffffff;
   --danger: #c4265e;
   --danger-hover: #a31e4e;
   --shadow: rgba(0, 0, 0, 0.5);
@@ -237,9 +247,10 @@
   --text-disabled: #928374;
   --border-primary: #504945;
   --border-secondary: #665c54;
-  --accent-primary: #83a598;
-  --accent-hover: #6f8f80;
-  --accent-light: rgba(131, 165, 152, 0.1);
+  --accent-primary: #5f8170;
+  --accent-hover: #4e6d5f;
+  --accent-light: rgba(95, 129, 112, 0.10);
+  --text-on-accent: #ffffff;
   --danger: #fb4934;
   --danger-hover: #e03424;
   --shadow: rgba(0, 0, 0, 0.3);
@@ -260,9 +271,10 @@
   --text-disabled: #586e75;
   --border-primary: #094656;
   --border-secondary: #0f6876;
-  --accent-primary: #268bd2;
-  --accent-hover: #1f73b5;
-  --accent-light: rgba(38, 139, 210, 0.1);
+  --accent-primary: #1f6fae;
+  --accent-hover: #195b93;
+  --accent-light: rgba(31, 111, 174, 0.10);
+  --text-on-accent: #ffffff;
   --danger: #dc322f;
   --danger-hover: #c42825;
   --shadow: rgba(0, 0, 0, 0.4);
@@ -401,6 +413,22 @@ button.danger:hover {
   position: relative;
   display: inline-block;
   width: 100%;
+}
+
+/* Gantt theme overrides to improve contrast */
+.gantt-theme svg text {
+  fill: var(--text-primary) !important;
+}
+
+/* Specific gantt-task-react obfuscated classes for bar label colors */
+.gantt-theme ._3zRJQ, .gantt-theme ._3KcaM, .gantt-theme ._9w8d5 {
+  /* Prefer explicit variable for text-on-accent if set, otherwise fall back to primary text */
+  fill: var(--text-on-accent, var(--text-primary)) !important;
+}
+
+/* Make project rows use accent background if library doesn't apply variable */
+.gantt-theme ._34SS0:nth-child(even) {
+  /* keep defaults for rows, but ensure project background stands out via inline styles */
 }
 
 .custom-dropdown-trigger {
@@ -1539,15 +1567,18 @@ button.danger:hover {
 /* Text colors inside gantt */
 .gantt-theme svg text,
 .gantt-theme svg tspan,
-/* Specific gantt text classes (from gantt-task-react dist CSS) - only change text fill/color */
+/* Specific gantt text classes (from gantt-task-react dist CSS) - use text-on-accent for labels on accent backgrounds */
 .gantt-theme ._9w8d5,
 .gantt-theme ._2q1Kt,
 .gantt-theme ._3KcaM,
 .gantt-theme ._29NTg,
 .gantt-theme ._3zRJQ {
-  fill: var(--text-primary) !important;
-  color: var(--text-primary) !important;
-  stroke: none !important;
+  fill: var(--text-on-accent, var(--text-primary)) !important;
+  color: var(--text-on-accent, var(--text-primary)) !important;
+  /* add outline/stroke for readability against light backgrounds */
+  stroke: var(--text-outline, rgba(0,0,0,0.6)) !important;
+  stroke-width: 2px !important;
+  paint-order: stroke !important;
 }
 
 .gantt-task-list-item {

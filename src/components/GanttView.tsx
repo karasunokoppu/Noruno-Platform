@@ -16,6 +16,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
     const [ganttTasks, setGanttTasks] = useState<GanttTask[]>([]);
     const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Day);
     const [sortOption, setSortOption] = useState<SortOption>("default");
+    const [collapsedProjects, setCollapsedProjects] = useState<string[]>([]);
 
     useEffect(() => {
         // Only include tasks that have both start_date and due_date set and are valid dates
@@ -26,44 +27,45 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
             return !isNaN(s.getTime()) && !isNaN(e.getTime());
         });
 
-        let newGanttTasks: GanttTask[] = filtered.map((task) => {
-            let endDate = new Date(task.due_date);
-            // Handle invalid end date (e.g. empty string)
-            if (isNaN(endDate.getTime())) {
-                endDate = new Date(); // Default to now if invalid
+        // Build gantt tasks grouped by Task.group. Each group becomes a `project` task,
+        // and member tasks are regular `task` entries with `project` set to the project's id.
+        const groupsMap: Record<string, Task[]> = {};
+        const ungrouped: Task[] = [];
+        filtered.forEach(t => {
+            const key = (t.group || '').trim();
+            if (key) {
+                if (!groupsMap[key]) groupsMap[key] = [];
+                groupsMap[key].push(t);
+            } else {
+                ungrouped.push(t);
             }
+        });
+
+        const newGanttTasks: GanttTask[] = [];
+
+        // Helper to create GanttTask from Task
+        const makeTask = (task: Task, projectId?: string): GanttTask => {
+            let endDate = new Date(task.due_date);
+            if (isNaN(endDate.getTime())) endDate = new Date();
 
             let startDate = new Date();
             if (task.start_date) {
-                const parsedStart = new Date(task.start_date);
-                if (!isNaN(parsedStart.getTime())) {
-                    startDate = parsedStart;
-                }
+                const parsed = new Date(task.start_date);
+                if (!isNaN(parsed.getTime())) startDate = parsed;
             } else {
-                if (endDate > new Date()) {
-                    startDate = new Date();
-                } else {
-                    startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
-                }
+                if (endDate > new Date()) startDate = new Date();
+                else startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
             }
 
-            if (startDate >= endDate) {
-                startDate = new Date(endDate.getTime() - 60 * 60 * 1000);
-            }
+            if (startDate >= endDate) startDate = new Date(endDate.getTime() - 60 * 60 * 1000);
 
-            // Calculate progress based on subtasks
-            let progress = 0;
-            if (task.subtasks && task.subtasks.length > 0) {
-                const completedCount = task.subtasks.filter(s => s.completed).length;
-                progress = Math.round((completedCount / task.subtasks.length) * 100);
-            } else {
-                progress = task.completed ? 100 : 0;
-            }
+            const progress = task.subtasks && task.subtasks.length > 0
+                ? Math.round((task.subtasks.filter(s => s.completed).length / task.subtasks.length) * 100)
+                : (task.completed ? 100 : 0);
 
-            // Map dependencies (number[] -> string[])
             const dependencies = task.dependencies?.map(d => d.toString());
 
-            return {
+            const out: GanttTask = {
                 start: startDate,
                 end: endDate,
                 name: task.description,
@@ -71,10 +73,49 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
                 type: "task",
                 progress: progress,
                 isDisabled: false,
-                styles: { progressColor: "#ffbb54", progressSelectedColor: "#ff9e0d" },
+                // Use theme variables so color follows current theme
+                styles: { progressColor: 'var(--accent-primary)', progressSelectedColor: 'var(--accent-primary)' },
                 dependencies: dependencies,
             };
+            if (projectId) out.project = projectId;
+            return out;
+        };
+
+        // Create project entries for each non-empty group
+        Object.keys(groupsMap).forEach((groupName, idx) => {
+            const members = groupsMap[groupName];
+            // compute min start and max end
+            const starts = members.map(m => new Date(m.start_date || m.due_date)).filter(d => !isNaN(d.getTime()));
+            const ends = members.map(m => new Date(m.due_date)).filter(d => !isNaN(d.getTime()));
+            const projStart = new Date(Math.min(...starts.map(d => d.getTime())));
+            const projEnd = new Date(Math.max(...ends.map(d => d.getTime())));
+            const projectId = `project-${idx}-${groupName}`;
+
+            // project progress: average of member progresses
+            const progValues = members.map(m => {
+                if (m.subtasks && m.subtasks.length > 0) return Math.round((m.subtasks.filter(s => s.completed).length / m.subtasks.length) * 100);
+                return m.completed ? 100 : 0;
+            });
+            const avgProgress = progValues.length > 0 ? Math.round(progValues.reduce((a,b) => a+b, 0) / progValues.length) : 0;
+
+            newGanttTasks.push({
+                id: projectId,
+                name: groupName,
+                start: projStart,
+                end: projEnd,
+                type: 'project',
+                progress: avgProgress,
+                isDisabled: false,
+                styles: { backgroundColor: '#f0f4f8' },
+                hideChildren: collapsedProjects.includes(projectId),
+            });
+
+            // add member tasks with project assigned
+            members.forEach(m => newGanttTasks.push(makeTask(m, projectId)));
         });
+
+        // Add ungrouped tasks after grouped ones
+        ungrouped.forEach(u => newGanttTasks.push(makeTask(u)));
 
         // Sorting
         if (sortOption === "startDate") {
@@ -93,7 +134,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
         } else {
             setGanttTasks([]);
         }
-    }, [tasks, sortOption]);
+    }, [tasks, sortOption, collapsedProjects]);
 
     const onDateChange = (task: GanttTask) => {
         const originalTask = tasks.find((t) => t.id.toString() === task.id);
@@ -153,7 +194,16 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
                     columnWidth={60}
                     barFill={60}
                     // ganttHeight={700}
-                />
+                    // set global progress bar colors (normal and selected)
+                        barProgressColor={'var(--accent-primary)'}
+                        barProgressSelectedColor={'var(--accent-primary)'}
+                        onExpanderClick={(task) => {
+                            if (task.type === 'project') {
+                                const id = task.id;
+                                setCollapsedProjects(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]);
+                            }
+                        }}
+                    />
             ) : (
                 <div className="text-text-secondary mt-10 text-center">No tasks to display</div>
             )}
