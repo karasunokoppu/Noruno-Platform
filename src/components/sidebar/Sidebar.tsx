@@ -3,7 +3,7 @@
 // This component renders the navigation sidebar with group selection and settings access.
 
 import React from "react";
-import { Task } from "../../App";
+import { Task } from "../../types";
 import ContextMenu from '../ui/ContextMenu';
 
 interface SidebarProps {

@@ -3,51 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import BookList from "./BookList";
 import BookDetail from "./BookDetail";
 import NotesAndSessionsPanel from "./NotesAndSessionsPanel";
+import { ReadingBook, ReadingStatus } from "../../types";
 
-// TypeScript型定義
-export type ReadingStatus = "want_to_read" | "reading" | "finished" | "paused";
-
-export interface ReadingNote {
-    id: string;
-    page_number?: number;
-    quote?: string;
-    comment: string;
-    created_at: string;
-}
-
-export interface ReadingSession {
-    id: string;
-    session_date: string;
-    start_page?: number;
-    end_page?: number;
-    pages_read: number;
-    duration_minutes?: number;
-    memo?: string;
-}
-
-export interface ReadingBook {
-    id: string;
-    title: string;
-    author?: string;
-    isbn?: string;
-    publisher?: string;
-    published_year?: number;
-    cover_image_url?: string;
-    genres: string[];
-    status: ReadingStatus;
-    start_date?: string;
-    finish_date?: string;
-    progress_percent?: number;
-    total_pages?: number;
-    current_page?: number;
-    rating?: number;
-    summary: string;
-    notes: ReadingNote[];
-    reading_sessions: ReadingSession[];
-    tags: string[];
-    created_at: string;
-    updated_at: string;
-}
 
 function ReadingMemoView() {
     const [books, setBooks] = useState<ReadingBook[]>([]);

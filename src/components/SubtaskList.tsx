@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { Task } from "../App";
+import { Task } from "../types";
 
 interface SubtaskListProps {
     task: Task;

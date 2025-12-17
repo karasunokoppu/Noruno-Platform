@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ReadingNote } from "./ReadingMemoView";
+import { ReadingNote } from "../../types";
 
 interface NoteEditorProps {
     note: ReadingNote | null;

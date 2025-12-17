@@ -1,4 +1,4 @@
-import { ReadingSession } from "./ReadingMemoView";
+import { ReadingSession } from "../../types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 

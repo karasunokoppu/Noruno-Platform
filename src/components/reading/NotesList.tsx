@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { ReadingBook, ReadingNote } from "./ReadingMemoView";
+import { ReadingBook, ReadingNote } from "../../types";
 import NoteCard from "./NoteCard";
 import NoteEditor from "./NoteEditor";
 

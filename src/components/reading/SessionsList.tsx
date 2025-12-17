@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { ReadingBook, ReadingSession } from "./ReadingMemoView";
+import { ReadingBook, ReadingSession } from "../../types";
 import SessionCard from "./SessionCard";
 import SessionEditor from "./SessionEditor";
 import ProgressChart from "./ProgressChart";

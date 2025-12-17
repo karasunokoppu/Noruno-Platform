@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ViewMode, Gantt, Task as GanttTask } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
-import { Task } from "../App";
+import { Task } from './../types';
 import CustomDropdown from './CustomDropdown';
 
 

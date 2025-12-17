@@ -1,4 +1,4 @@
-import { ReadingNote } from "./ReadingMemoView";
+import { ReadingNote } from "../../types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 

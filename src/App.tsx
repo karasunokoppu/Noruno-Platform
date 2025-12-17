@@ -12,36 +12,11 @@ import MemoView from "./components/memo";
 import ReadingMemoView from "./components/reading";
 import DashboardView from "./components/dashboard";
 import GanttView from "./components/GanttView";
+import type {Task, ReadingBook} from "./types";
+import { getGroups, getTasks } from "./tauri/api";
 
 // Reading Book interface for dashboard
-interface ReadingBook {
-  id: string;
-  title: string;
-  status: string;
-  reading_sessions: {
-    duration_minutes?: number;
-    pages_read: number;
-  }[];
-}
 
-export interface Subtask {
-  id: number;
-  description: string;
-  completed: boolean;
-}
-
-export interface Task {
-  id: number;
-  description: string;
-  start_date?: string;
-  due_date: string;
-  group: string;
-  details: string;
-  completed: boolean;
-  notification_minutes?: number;
-  subtasks: Subtask[];
-  dependencies?: number[];
-}
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -61,8 +36,8 @@ function App() {
   }, []);
 
   async function refreshData() {
-    const loadedTasks = await invoke<Task[]>("get_tasks");
-    const loadedGroups = await invoke<string[]>("get_groups");
+    const loadedTasks = await getTasks();
+    const loadedGroups = await getGroups();
     const loadedBooks = await invoke<ReadingBook[]>("get_reading_books");
     setTasks(loadedTasks);
     setGroups(loadedGroups);

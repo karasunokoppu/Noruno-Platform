@@ -1,7 +1,7 @@
 // 統計ダッシュボードコンポーネント
 
 import React, { useMemo } from "react";
-import { Task } from "../../App";
+import { Task } from "../../types";
 import StatsCard from "./StatsCard";
 import TaskCompletionChart from "./TaskCompletionChart";
 

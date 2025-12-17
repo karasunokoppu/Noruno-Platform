@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ReadingSession } from "./ReadingMemoView";
+import { ReadingSession } from "../../types";
 import CustomDatePicker from "../CustomDatePicker";
 
 interface SessionEditorProps {

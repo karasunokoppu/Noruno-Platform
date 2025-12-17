@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Task } from '../App';
+import { Task } from './../types';
 import CustomDatePicker from './CustomDatePicker';
 import CustomDropdown from './CustomDropdown';
 

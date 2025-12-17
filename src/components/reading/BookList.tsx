@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ReadingBook, ReadingStatus } from "./ReadingMemoView";
+import { ReadingBook, ReadingStatus } from "../../types";
 import BookCard from "./BookCard";
 
 interface BookListProps {

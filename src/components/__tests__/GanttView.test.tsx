@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import GanttView from '../GanttView';
-import { Task } from '../../App';
+import { Task } from '../../types';
 
 describe('GanttView', () => {
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Task } from '../App';
+import { Task } from './../types';
 import CustomDropdown from './CustomDropdown';
 import { invoke } from '@tauri-apps/api/core';
 import CalendarEventDialog from './CalendarEventDialog';

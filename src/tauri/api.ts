@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
-import type { MailSettings } from '../types';
+import type { MailSettings, Task, ReadingBook} from '../types';
 
+//Mail
 export async function getMailSettings(): Promise<MailSettings> {
     try {
         return await invoke<MailSettings>('get_mail_settings');
@@ -33,6 +34,36 @@ export async function checkNotifications(): Promise<string> {
         return await invoke<string>('check_notifications');
     } catch (e) {
         console.error('checkNotifications failed', e);
+        throw e;
+    }
+}
+
+//Task
+export async function getTasks(): Promise<Task[]> {
+    try {
+        return await invoke<Task[]>("get_tasks");
+    } catch (e) {
+        console.error('getTasks failed', e);
+        throw e;
+    }
+}
+
+export async function getGroups(): Promise<string[]> {
+    try {
+        return await invoke<string[]>("get_groups");
+    } catch (e) {
+        console.error('getGroups failed', e);
+        throw e;
+    }
+}
+
+//Reading Memos
+
+export async function getReadingBooks(): Promise<ReadingBook[]> {
+    try {
+        return await invoke<ReadingBook[]>("get_reading_books");
+    } catch (e) {
+        console.error('getReadingBooks failed', e);
         throw e;
     }
 }

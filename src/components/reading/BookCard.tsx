@@ -1,4 +1,4 @@
-import { ReadingBook } from "./ReadingMemoView";
+import { ReadingBook } from "../../types";
 
 interface BookCardProps {
     book: ReadingBook;

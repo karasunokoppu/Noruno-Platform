@@ -3,7 +3,7 @@
 // This component renders a hierarchical tree of folders for organizing memos.
 
 import React, { useState } from 'react';
-import { Folder } from './MemoView';
+import { Folder } from '../../types';
 import ContextMenu from '../ui/ContextMenu';
 
 interface FolderTreeProps {

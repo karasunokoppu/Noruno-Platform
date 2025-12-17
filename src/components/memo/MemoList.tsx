@@ -3,7 +3,7 @@
 // This component displays a list of memos with search functionality and filtering.
 
 import React from 'react';
-import { Memo } from './MemoView';
+import { Memo } from '../../types';
 
 interface MemoListProps {
     memos: Memo[];

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ReadingBook } from "./ReadingMemoView";
+import { ReadingBook } from "../../types";
 import NotesList from "./NotesList";
 import SessionsList from "./SessionsList";
 

@@ -1,4 +1,4 @@
-import { ReadingSession } from "./ReadingMemoView";
+import { ReadingSession } from "../../types";
 
 interface ProgressChartProps {
     sessions: ReadingSession[];

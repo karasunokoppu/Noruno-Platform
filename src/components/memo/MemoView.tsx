@@ -7,22 +7,7 @@ import { invoke } from '@tauri-apps/api/core';
 import FolderTree from './FolderTree';
 import MemoList from './MemoList';
 import MemoEditor from './MemoEditor';
-
-export interface Memo {
-    id: string;
-    title: string;
-    content: string;
-    folder_id: string | null;
-    tags: string[];
-    created_at: string;
-    updated_at: string;
-}
-
-export interface Folder {
-    id: string;
-    name: string;
-    parent_id: string | null;
-}
+import type { Memo, Folder } from '../../types';
 
 const MemoView: React.FC = () => {
     const [memos, setMemos] = useState<Memo[]>([]);
