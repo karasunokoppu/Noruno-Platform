@@ -64,7 +64,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Description</label>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Description</label>
                         <input
                             type="text"
                             value={description}
@@ -75,7 +75,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
 
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Start Date</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Start Date</label>
                             <button
                                 className="secondary"
                                 onClick={() => setShowStartDatePicker(true)}
@@ -85,7 +85,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                             </button>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Due Date</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Due Date</label>
                             <button
                                 className="secondary"
                                 onClick={() => setShowDatePicker(true)}
@@ -97,7 +97,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Group</label>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Group</label>
                         <CustomDropdown
                             value={group}
                             onChange={setGroup}
@@ -110,7 +110,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Details</label>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Details</label>
                         <textarea
                             value={details}
                             onChange={(e) => setDetails(e.target.value)}
@@ -120,9 +120,9 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                                 boxSizing: 'border-box',
                                 padding: '10px',
                                 borderRadius: '6px',
-                                border: '1px solid #3a3a3a',
-                                backgroundColor: '#333',
-                                color: 'white',
+                                border: `1px solid var(--border-primary)`,
+                                backgroundColor: 'var(--bg-tertiary)',
+                                color: 'var(--text-primary)',
                                 resize: 'vertical'
                             }}
                         />
@@ -130,14 +130,14 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
 
                     {/* Dependencies Section */}
                     <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Dependencies (Predecessors)</label>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Dependencies (Predecessors)</label>
                         <div style={{
                             maxHeight: '200px',
                             overflowY: 'auto',
-                            border: '1px solid #3a3a3a',
+                            border: `1px solid var(--border-primary)`,
                             borderRadius: '6px',
                             padding: '5px',
-                            backgroundColor: '#2a2a2a'
+                            backgroundColor: 'var(--bg-secondary)'
                         }}>
                             {allTasks
                                 .filter(t => t.id !== task.id) // Exclude self
@@ -149,17 +149,17 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                                             onChange={() => toggleDependency(t.id)}
                                             style={{ marginRight: '8px' }}
                                         />
-                                        <span style={{ fontSize: '12px', color: '#ddd' }}>{t.group ? `${t.group}: ${t.description}` : t.description}</span>
+                                        <span style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{t.group ? `${t.group}: ${t.description}` : t.description}</span>
                                     </div>
                                 ))
                             }
-                            {allTasks.length <= 1 && <div style={{ fontSize: '12px', color: '#666', padding: '5px' }}>No other tasks available</div>}
+                            {allTasks.length <= 1 && <div style={{ fontSize: '12px', color: 'var(--text-disabled)', padding: '5px' }}>No other tasks available</div>}
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Notify before (optional)</label>
+                    <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Notify before (optional)</label>
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <div style={{ flex: 1 }}>
                             <input
@@ -169,7 +169,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                                 style={{ width: '100%', boxSizing: 'border-box' }}
                                 min="0"
                             />
-                            <small style={{ display: 'block', marginTop: '2px', color: '#888' }}>Days</small>
+                            <small style={{ display: 'block', marginTop: '2px', color: 'var(--text-tertiary)' }}>Days</small>
                         </div>
                         <div style={{ flex: 1 }}>
                             <input
@@ -180,7 +180,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                                 min="0"
                                 max="23"
                             />
-                            <small style={{ display: 'block', marginTop: '2px', color: '#888' }}>Hours</small>
+                            <small style={{ display: 'block', marginTop: '2px', color: 'var(--text-tertiary)' }}>Hours</small>
                         </div>
                         <div style={{ flex: 1 }}>
                             <input
@@ -191,7 +191,7 @@ const EditDialog: React.FC<EditDialogProps> = ({ task, existingGroups, allTasks 
                                 min="0"
                                 max="59"
                             />
-                            <small style={{ display: 'block', marginTop: '2px', color: '#888' }}>Minutes</small>
+                            <small style={{ display: 'block', marginTop: '2px', color: 'var(--text-tertiary)' }}>Minutes</small>
                         </div>
                     </div>
                 </div>

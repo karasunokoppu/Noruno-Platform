@@ -36,7 +36,7 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
     const [endDate, setEndDate] = useState(initialEnd.date);
     const [endTime, setEndTime] = useState(initialEnd.time);
     const [allDay, setAllDay] = useState(event?.all_day || false);
-    const [color, setColor] = useState(event?.color || '#3b82f6'); // Default blue
+    const [color, setColor] = useState(event?.color || 'var(--accent-primary)'); // Default blue (theme)
 
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
     const [showEndDatePicker, setShowEndDatePicker] = useState(false);
@@ -72,7 +72,7 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
 
                     {/* Title */}
                     <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Title</label>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Title</label>
                         <input
                             type="text"
                             value={title}
@@ -91,13 +91,13 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
                             checked={allDay}
                             onChange={(e) => setAllDay(e.target.checked)}
                         />
-                        <label htmlFor="allDay" style={{ fontSize: '14px', color: '#fff' }}>All Day</label>
+                        <label htmlFor="allDay" style={{ fontSize: '14px', color: 'var(--text-primary)' }}>All Day</label>
                     </div>
 
                     {/* Time Range */}
                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                         <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '12px', color: '#aaa' }}>Start</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '12px', color: 'var(--text-secondary)' }}>Start</label>
                             <div style={{ display: 'flex', gap: '5px' }}>
                                 <button className="secondary" onClick={() => setShowStartDatePicker(true)} style={{ flex: 2 }}>
                                     {startDate.replace(/-/g, '/')}
@@ -113,7 +113,7 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
                             </div>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '12px', color: '#aaa' }}>End</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontSize: '12px', color: 'var(--text-secondary)' }}>End</label>
                             <div style={{ display: 'flex', gap: '5px' }}>
                                 <button className="secondary" onClick={() => setShowEndDatePicker(true)} style={{ flex: 2 }}>
                                     {endDate.replace(/-/g, '/')}
@@ -132,7 +132,7 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
 
                     {/* Color */}
                     <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Color</label>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Color</label>
                         <div style={{ display: 'flex', gap: '10px' }}>
                             {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map(c => (
                                 <div
@@ -144,8 +144,8 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
                                         borderRadius: '50%',
                                         backgroundColor: c,
                                         cursor: 'pointer',
-                                        border: color === c ? '2px solid white' : '2px solid transparent',
-                                        boxShadow: color === c ? '0 0 0 2px #333' : 'none'
+                                        border: color === c ? `2px solid var(--text-on-accent)` : '2px solid transparent',
+                                        boxShadow: color === c ? `0 0 0 2px var(--border-primary)` : 'none'
                                     }}
                                 />
                             ))}
@@ -154,7 +154,7 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
 
                     {/* Description */}
                     <div>
-                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: '#aaa' }}>Description</label>
+                        <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', color: 'var(--text-secondary)' }}>Description</label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -164,9 +164,9 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
                                 boxSizing: 'border-box',
                                 padding: '10px',
                                 borderRadius: '6px',
-                                border: '1px solid #3a3a3a',
-                                backgroundColor: '#333',
-                                color: 'white',
+                                border: `1px solid var(--border-primary)`,
+                                backgroundColor: 'var(--bg-tertiary)',
+                                color: 'var(--text-primary)',
                                 resize: 'vertical'
                             }}
                         />
@@ -178,7 +178,7 @@ const CalendarEventDialog: React.FC<CalendarEventDialogProps> = ({ event, initia
                     {event && onDelete ? (
                         <button
                             className="bg-red-600 hover:bg-red-700 text-white"
-                            style={{ backgroundColor: '#dc2626' }}
+                            style={{ backgroundColor: 'var(--danger)' }}
                             onClick={() => onDelete(event.id)}
                         >
                             Delete

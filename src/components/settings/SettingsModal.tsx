@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { invoke } from '@tauri-apps/api/core';
 import pkg from '../../../package.json';
 import CustomDropdown from '../CustomDropdown';
-
-interface MailSettings {
-    email: string;
-    app_password: string;
-    notification_minutes: number;  // Changed from notification_days
-}
+import type { MailSettings } from '../../types';
+import { getMailSettings, saveMailSettings, sendTestEmail, checkNotifications } from '../../tauri/api';
 
 interface SettingsModalProps {
     onClose: () => void;
@@ -44,7 +39,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
 
     const loadSettings = async () => {
         try {
-            const loaded = await invoke<MailSettings>('get_mail_settings');
+            const loaded = await getMailSettings();
             setSettings(loaded);
 
             // Convert minutes to days/hours/minutes for display
@@ -74,7 +69,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                 notification_minutes: totalMinutes
             };
 
-            await invoke('save_mail_settings', { settings: updatedSettings });
+            await saveMailSettings(updatedSettings);
             setSettings(updatedSettings);
             setStatus('Settings saved successfully!');
             setTimeout(() => setStatus(''), 3000);
@@ -87,7 +82,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
     const handleTestEmail = async () => {
         setStatus('Sending test email...');
         try {
-            const result = await invoke<string>('send_test_email');
+            const result = await sendTestEmail();
             setStatus(result);
         } catch (error) {
             setStatus(`Error: ${error}`);
@@ -97,7 +92,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
     const handleCheckNotifications = async () => {
         setStatus('Checking notifications...');
         try {
-            const result = await invoke<string>('check_notifications');
+            const result = await checkNotifications();
             setStatus(result);
             // Auto-close status after 5 seconds
             setTimeout(() => setStatus(''), 5000);
@@ -162,7 +157,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                         placeholder="xxxx xxxx xxxx xxxx"
                         style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
                     />
-                    <small style={{ display: 'block', marginBottom: '10px', color: '#888' }}>
+                    <small style={{ display: 'block', marginBottom: '10px', color: 'var(--text-tertiary)' }}>
                         Use an App Password generated from your Google Account settings (Security {'>'} 2-Step Verification {'>'} App passwords).
                     </small>
                 </div>
@@ -178,7 +173,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                                 onChange={(e) => setNotifyDays(e.target.value)}
                                 style={{ width: '100%', padding: '5px', fontSize: '13px' }}
                             />
-                            <small style={{ display: 'block', marginTop: '1px', color: '#888', fontSize: '11px' }}>Days</small>
+                            <small style={{ display: 'block', marginTop: '1px', color: 'var(--text-tertiary)', fontSize: '11px' }}>Days</small>
                         </div>
                         <div style={{ maxWidth: '70px' }}>
                             <input
@@ -189,7 +184,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                                 onChange={(e) => setNotifyHours(e.target.value)}
                                 style={{ width: '100%', padding: '5px', fontSize: '13px' }}
                             />
-                            <small style={{ display: 'block', marginTop: '1px', color: '#888', fontSize: '11px' }}>Hours</small>
+                            <small style={{ display: 'block', marginTop: '1px', color: 'var(--text-tertiary)', fontSize: '11px' }}>Hours</small>
                         </div>
                         <div style={{ maxWidth: '70px' }}>
                             <input
@@ -200,7 +195,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                                 onChange={(e) => setNotifyMinutes(e.target.value)}
                                 style={{ width: '100%', padding: '5px', fontSize: '13px' }}
                             />
-                            <small style={{ display: 'block', marginTop: '1px', color: '#888', fontSize: '11px' }}>Minutes</small>
+                            <small style={{ display: 'block', marginTop: '1px', color: 'var(--text-tertiary)', fontSize: '11px' }}>Minutes</small>
                         </div>
                     </div>
                 </div>
@@ -210,7 +205,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
                     padding: '10px',
                     backgroundColor: 'var(--bg-tertiary)',
                     borderRadius: '6px',
-                    color: status.startsWith('Error') || status.startsWith('Failed') ? 'red' : 'green',
+                    color: status.startsWith('Error') || status.startsWith('Failed') ? 'var(--danger)' : 'var(--accent-success)',
                     maxHeight: '200px',
                     overflowY: 'auto',
                     whiteSpace: 'pre-wrap',
@@ -219,15 +214,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, theme, onThemeCh
 
                 <div className="modal-actions" style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', gap: '10px' }}>
-                        <button onClick={handleTestEmail} style={{ backgroundColor: '#2196F3' }}>Test Email</button>
-                        <button onClick={handleCheckNotifications} style={{ backgroundColor: '#4CAF50' }}>Check Now</button>
+                        <button onClick={handleTestEmail} style={{ backgroundColor: 'var(--accent-primary)' }}>Test Email</button>
+                        <button onClick={handleCheckNotifications} style={{ backgroundColor: 'var(--accent-success)' }}>Check Now</button>
                     </div>
                     <div>
-                        <button onClick={onClose} style={{ marginRight: '10px', backgroundColor: '#666' }}>Close</button>
-                        <button onClick={handleSave} style={{ backgroundColor: '#4CAF50' }}>Save</button>
+                        <button onClick={onClose} style={{ marginRight: '10px', backgroundColor: 'var(--muted)' }}>Close</button>
+                        <button onClick={handleSave} style={{ backgroundColor: 'var(--accent-success)' }}>Save</button>
                     </div>
                 </div>
-                <div style={{ marginTop: '8px', textAlign: 'right', color: '#999', fontSize: '12px' }}>
+                <div style={{ marginTop: '8px', textAlign: 'right', color: 'var(--muted)', fontSize: '12px' }}>
                     Version: {appVersion}
                 </div>
             </div>

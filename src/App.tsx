@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import "./styles/theme.css";
 import "./App.css";
 import Sidebar from "./components/sidebar";
 import TaskList from "./components/TaskList";

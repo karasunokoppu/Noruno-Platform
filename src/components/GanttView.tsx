@@ -98,7 +98,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
             });
             const avgProgress = progValues.length > 0 ? Math.round(progValues.reduce((a,b) => a+b, 0) / progValues.length) : 0;
 
-            newGanttTasks.push({
+                newGanttTasks.push({
                 id: projectId,
                 name: groupName,
                 start: projStart,
@@ -106,7 +106,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
                 type: 'project',
                 progress: avgProgress,
                 isDisabled: false,
-                styles: { backgroundColor: '#f0f4f8' },
+                    styles: { backgroundColor: 'var(--accent-light)' },
                 hideChildren: collapsedProjects.includes(projectId),
             });
 

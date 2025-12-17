@@ -4,6 +4,7 @@
 
 import React from "react";
 import { Task } from "../../App";
+import ContextMenu from '../ui/ContextMenu';
 
 interface SidebarProps {
     tasks: Task[];
@@ -21,12 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ tasks, groups, currentGroup, onSelect
     const [newGroupName, setNewGroupName] = React.useState("");
     const [isAdding, setIsAdding] = React.useState(false);
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [contextMenu, setContextMenu] = React.useState<{
-        visible: boolean;
-        x: number;
-        y: number;
-        group: string | null;
-    }>({ visible: false, x: 0, y: 0, group: null });
+    const [contextMenu, setContextMenu] = React.useState<{ x: number; y: number; group: string | null } | null>(null);
 
     React.useEffect(() => {
         if (isAdding && inputRef.current) {
@@ -34,20 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ tasks, groups, currentGroup, onSelect
         }
     }, [isAdding]);
 
-    React.useEffect(() => {
-        const onClick = () => {
-            if (contextMenu.visible) setContextMenu({ visible: false, x: 0, y: 0, group: null });
-        };
-        const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && contextMenu.visible) setContextMenu({ visible: false, x: 0, y: 0, group: null });
-        };
-        window.addEventListener('click', onClick);
-        window.addEventListener('keydown', onKey);
-        return () => {
-            window.removeEventListener('click', onClick);
-            window.removeEventListener('keydown', onKey);
-        };
-    }, [contextMenu.visible]);
+    // Context menu lifecycle handled by shared ContextMenu component
 
     const handleAddGroup = () => {
         if (newGroupName.trim()) {
@@ -109,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ tasks, groups, currentGroup, onSelect
                     onClick={() => onSelectGroup(group)}
                     onContextMenu={(e) => {
                         e.preventDefault();
-                        setContextMenu({ visible: true, x: e.clientX, y: e.clientY, group });
+                        setContextMenu({ x: e.clientX, y: e.clientY, group });
                     }}
                 >
                     <div className="flex items-center gap-1"><span>📁</span> {group}</div>
@@ -125,27 +108,30 @@ const Sidebar: React.FC<SidebarProps> = ({ tasks, groups, currentGroup, onSelect
                 </div>
             ))}
 
-            {contextMenu.visible && contextMenu.group && (
-                <>
-                    <div
-                        className="context-menu"
-                        style={{ position: 'fixed', left: contextMenu.x, top: contextMenu.y }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <div onClick={() => {
-                            const g = contextMenu.group as string;
-                            const newName = prompt(`Rename group "${g}" to:`, g);
-                            if (newName && newName.trim() && newName.trim() !== g) onRenameGroup(g, newName.trim());
-                            setContextMenu({ visible: false, x: 0, y: 0, group: null });
-                        }}>Rename</div>
-                        <div onClick={() => {
-                            const g = contextMenu.group as string;
-                            if (confirm(`Delete group "${g}"?`)) onDeleteGroup(g);
-                            setContextMenu({ visible: false, x: 0, y: 0, group: null });
-                        }} className="text-danger">Delete</div>
-                    </div>
-                    <div className="context-menu-overlay" onClick={() => setContextMenu({ visible: false, x: 0, y: 0, group: null })} />
-                </>
+            {contextMenu && (
+                <ContextMenu
+                    x={contextMenu.x}
+                    y={contextMenu.y}
+                    onClose={() => setContextMenu(null)}
+                    items={[
+                        {
+                            label: 'Rename',
+                            onClick: () => {
+                                const g = contextMenu.group as string;
+                                const newName = prompt(`Rename group "${g}" to:`, g);
+                                if (newName && newName.trim() && newName.trim() !== g) onRenameGroup(g, newName.trim());
+                            }
+                        },
+                        {
+                            label: 'Delete',
+                            danger: true,
+                            onClick: () => {
+                                const g = contextMenu.group as string;
+                                if (confirm(`Delete group "${g}"?`)) onDeleteGroup(g);
+                            }
+                        }
+                    ]}
+                />
             )}
 
             {hasNoGroup && (

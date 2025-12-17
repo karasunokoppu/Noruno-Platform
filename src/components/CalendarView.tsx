@@ -167,7 +167,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ tasks, groups, onEdit, onAd
                                 key={event.id}
                                 className="day-task-item event-item"
                                 style={{
-                                    backgroundColor: event.color || '#3b82f6',
+                                    backgroundColor: event.color || 'var(--accent-primary)',
                                     borderLeft: '3px solid rgba(0,0,0,0.2)'
                                 }}
                                 onClick={(e) => {

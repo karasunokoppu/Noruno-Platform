@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { Folder } from './MemoView';
+import ContextMenu from '../ui/ContextMenu';
 
 interface FolderTreeProps {
     folders: Folder[];
@@ -114,22 +115,22 @@ const FolderTree: React.FC<FolderTreeProps> = ({
             )}
 
             {contextMenu && (
-                <div
-                    className="context-menu"
-                    style={{ position: 'fixed', left: contextMenu.x, top: contextMenu.y }}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <div onClick={() => { setNewFolderParentId(contextMenu.folderId || null); setShowNewFolderInput(true); setContextMenu(null); }}>New Subfolder</div>
-                    {contextMenu.folderId && (
-                        <>
-                            <div onClick={handleRename}>Rename</div>
-                            <div onClick={handleDelete}>Delete</div>
-                        </>
-                    )}
-                </div>
+                <ContextMenu
+                    x={contextMenu.x}
+                    y={contextMenu.y}
+                    onClose={() => setContextMenu(null)}
+                    items={[
+                        {
+                            label: 'New Subfolder',
+                            onClick: () => { setNewFolderParentId(contextMenu.folderId || null); setShowNewFolderInput(true); }
+                        },
+                        ...(contextMenu.folderId ? [
+                            { label: 'Rename', onClick: handleRename },
+                            { label: 'Delete', danger: true, onClick: handleDelete }
+                        ] : [])
+                    ]}
+                />
             )}
-
-            {contextMenu && <div className="context-menu-overlay" onClick={() => setContextMenu(null)} />}
         </div>
     );
 };
