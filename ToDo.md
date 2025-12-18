@@ -24,4 +24,4 @@
 # メモ
 
 - セーブデータの場所
-'~/.local/share/com.noruno.platform/'
+  '~/.local/share/com.noruno.platform/'

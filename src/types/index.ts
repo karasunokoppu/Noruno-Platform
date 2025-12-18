@@ -1,18 +1,16 @@
 export interface MailSettings {
-    email: string;
-    app_password: string;
-    notification_minutes: number;
+  email: string;
+  app_password: string;
+  notification_minutes: number;
 }
-
-
 
 // Minimal Task type used where convenient — existing App exports its own Task
 export interface MinimalTask {
-    id: number | string;
-    description?: string;
-    start_date?: string | null;
-    due_date?: string | null;
-    group?: string | null;
+  id: number | string;
+  description?: string;
+  start_date?: string | null;
+  due_date?: string | null;
+  group?: string | null;
 }
 
 //Task
@@ -37,19 +35,19 @@ export interface Subtask {
 
 //Memos
 export interface Memo {
-    id: string;
-    title: string;
-    content: string;
-    folder_id: string | null;
-    tags: string[];
-    created_at: string;
-    updated_at: string;
+  id: string;
+  title: string;
+  content: string;
+  folder_id: string | null;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Folder {
-    id: string;
-    name: string;
-    parent_id: string | null;
+  id: string;
+  name: string;
+  parent_id: string | null;
 }
 
 //Reading Memos
@@ -67,45 +65,45 @@ export interface Folder {
 export type ReadingStatus = "want_to_read" | "reading" | "finished" | "paused";
 
 export interface ReadingNote {
-    id: string;
-    page_number?: number;
-    quote?: string;
-    comment: string;
-    created_at: string;
+  id: string;
+  page_number?: number;
+  quote?: string;
+  comment: string;
+  created_at: string;
 }
 
 export interface ReadingSession {
-    id: string;
-    session_date: string;
-    start_page?: number;
-    end_page?: number;
-    pages_read: number;
-    duration_minutes?: number;
-    memo?: string;
+  id: string;
+  session_date: string;
+  start_page?: number;
+  end_page?: number;
+  pages_read: number;
+  duration_minutes?: number;
+  memo?: string;
 }
 
 export interface ReadingBook {
-    id: string;
-    title: string;
-    author?: string;
-    isbn?: string;
-    publisher?: string;
-    published_year?: number;
-    cover_image_url?: string;
-    genres: string[];
-    status: ReadingStatus;
-    start_date?: string;
-    finish_date?: string;
-    progress_percent?: number;
-    total_pages?: number;
-    current_page?: number;
-    rating?: number;
-    summary: string;
-    notes: ReadingNote[];
-    reading_sessions: ReadingSession[];
-    tags: string[];
-    created_at: string;
-    updated_at: string;
+  id: string;
+  title: string;
+  author?: string;
+  isbn?: string;
+  publisher?: string;
+  published_year?: number;
+  cover_image_url?: string;
+  genres: string[];
+  status: ReadingStatus;
+  start_date?: string;
+  finish_date?: string;
+  progress_percent?: number;
+  total_pages?: number;
+  current_page?: number;
+  rating?: number;
+  summary: string;
+  notes: ReadingNote[];
+  reading_sessions: ReadingSession[];
+  tags: string[];
+  created_at: string;
+  updated_at: string;
 }
 
 export default {};

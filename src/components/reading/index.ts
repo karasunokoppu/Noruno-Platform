@@ -1,1 +1,1 @@
-export { default as default } from './ReadingMemoView';
+export { default as default } from "./ReadingMemoView";

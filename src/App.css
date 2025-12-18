@@ -42,7 +42,6 @@
 
 /* Theme variables are centralized in src/styles/theme.css */
 
-
 body {
   margin: 0;
   display: flex;
@@ -57,8 +56,6 @@ body {
   width: 100%;
   height: 100vh;
 }
-
-
 
 /* Sidebar */
 /* Sidebar */
@@ -181,7 +178,9 @@ button.danger:hover {
 }
 
 /* Specific gantt-task-react obfuscated classes for bar label colors */
-.gantt-theme ._3zRJQ, .gantt-theme ._3KcaM, .gantt-theme ._9w8d5 {
+.gantt-theme ._3zRJQ,
+.gantt-theme ._3KcaM,
+.gantt-theme ._9w8d5 {
   /* Prefer explicit variable for text-on-accent if set, otherwise fall back to primary text */
   fill: var(--text-on-accent, var(--text-primary)) !important;
 }
@@ -201,7 +200,9 @@ button.danger:hover {
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
   font-size: 14px;
 }
 
@@ -281,7 +282,9 @@ button.danger:hover {
   border-radius: 8px;
   margin-bottom: 10px;
   padding: 15px;
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
   border: 1px solid var(--border-primary);
 }
 
@@ -295,8 +298,6 @@ button.danger:hover {
   align-items: center;
   gap: 15px;
 }
-
-
 
 .task-info {
   flex: 1;
@@ -625,7 +626,7 @@ button.danger:hover {
   gap: 4px;
   max-height: 250px;
   overflow-y: auto;
-  align-items:start;
+  align-items: start;
 }
 
 .folder-item {
@@ -883,7 +884,7 @@ button.danger:hover {
   resize: none;
   background-color: transparent;
   color: var(--text-primary);
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 14px;
   line-height: 1.6;
   outline: none;
@@ -1018,7 +1019,6 @@ button.danger:hover {
   margin: 0.3em 0;
   line-height: 1.6;
 }
-
 
 /* Horizontal Rule */
 .memo-preview-pane hr {
@@ -1294,7 +1294,9 @@ button.danger:hover {
 }
 
 .task-delete:hover {
-  background-color: var(--danger-hover) !important; /* slightly stronger on hover */
+  background-color: var(
+    --danger-hover
+  ) !important; /* slightly stronger on hover */
 }
 
 /* Gantt theme overrides: scope under .gantt-theme to avoid global leakage */
@@ -1336,7 +1338,7 @@ button.danger:hover {
   fill: var(--text-on-accent, var(--text-primary)) !important;
   color: var(--text-on-accent, var(--text-primary)) !important;
   /* add outline/stroke for readability against light backgrounds */
-  stroke: var(--text-outline, rgba(0,0,0,0.6)) !important;
+  stroke: var(--text-outline, rgba(0, 0, 0, 0.6)) !important;
   stroke-width: 2px !important;
   paint-order: stroke !important;
 }
@@ -1344,7 +1346,6 @@ button.danger:hover {
 .gantt-task-list-item {
   white-space: normal;
 }
-
 
 .detail-content {
   flex: 1;
@@ -1915,8 +1916,6 @@ button.danger:hover {
   background-color: var(--bg-hover);
 }
 
-
-
 .subtask-item span {
   flex: 1;
   font-size: 14px;
@@ -1935,7 +1934,9 @@ button.danger:hover {
   cursor: pointer;
   font-size: 12px;
   padding: 2px 6px;
-  transition: opacity 0.15s, color 0.15s;
+  transition:
+    opacity 0.15s,
+    color 0.15s;
 }
 
 .subtask-item:hover .subtask-delete {
@@ -2014,7 +2015,9 @@ button.danger:hover {
   align-items: flex-start;
   gap: 12px;
   border: 1px solid var(--border-primary);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .stats-card:hover {
@@ -2118,7 +2121,11 @@ button.danger:hover {
 }
 
 .chart-bar {
-  background: linear-gradient(180deg, var(--accent-primary), var(--accent-hover));
+  background: linear-gradient(
+    180deg,
+    var(--accent-primary),
+    var(--accent-hover)
+  );
   border-radius: 4px 4px 0 0;
   min-height: 4px;
   display: flex;
@@ -2179,7 +2186,7 @@ button.danger:hover {
 
 .memo-preview-pane input[type="checkbox"]:checked::after,
 .markdown-body input[type="checkbox"]:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 30%;
   top: 10%;

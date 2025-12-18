@@ -22,17 +22,20 @@
 ## 優先度付き推奨リファクタ（高→中→低）
 
 ### 高（即効性があり安全）
+
 - `src/types/index.ts` を作成して共通型を集約する。
 - `src/tauri/api.ts` のようなラッパーを作り、`invoke` 呼び出しを型付き関数に置換する。エラー処理とロギングを集中させる。
 - テーマ色を CSS 変数で一元化する（`src/styles/theme.css` など）。主要コンポーネントのハードコード色を変数参照に置き換える。
 - `src/utils/date.ts` を作り、日付のフォーマット／パースを集中管理する。
 
 ### 中（やや作業量あり）
+
 - `src/components/ui` に `Modal`, `ContextMenu`, `Button`, `Input` を作成し、既存コンポーネントを段階的に差し替える。
 - `prompt()` を使っている箇所を `InputModal` / `ConfirmDialog` に置換して UX を統一する。
 - `useAsyncInvoke` のような Hook を作り、ローディング／エラー表示を共通化する。
 
 ### 低（導入効果はあるが優先度低め）
+
 - ESLint / Prettier / husky / lint-staged の導入
 - ユニットテスト（date utilities, grouping logic 等）の強化
 - CI（GitHub Actions）での自動 lint/test/build の設定
@@ -44,14 +47,14 @@
 ### 1) Tauri API ラッパー（`src/tauri/api.ts`）
 
 ```ts
-import { invoke } from '@tauri-apps/api/core';
-import type { MailSettings } from '../types';
+import { invoke } from "@tauri-apps/api/core";
+import type { MailSettings } from "../types";
 
 export const saveMailSettings = async (settings: MailSettings) => {
   try {
-    return await invoke('save_mail_settings', { settings });
+    return await invoke("save_mail_settings", { settings });
   } catch (e) {
-    console.error('saveMailSettings failed', e);
+    console.error("saveMailSettings failed", e);
     throw e;
   }
 };
@@ -62,8 +65,12 @@ export const saveMailSettings = async (settings: MailSettings) => {
 ### 2) 日付ユーティリティ（`src/utils/date.ts`）
 
 ```ts
-export const toYMD = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-export const parseYMD = (s: string) => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
+export const toYMD = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+export const parseYMD = (s: string) => {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+};
 ```
 
 一箇所でフォーマットを変えればアプリ全体に反映されます。

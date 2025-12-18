@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import "./styles/theme.css";
 import "./App.css";
 import Sidebar from "./components/sidebar";
@@ -12,11 +11,21 @@ import MemoView from "./components/memo";
 import ReadingMemoView from "./components/reading";
 import DashboardView from "./components/dashboard";
 import GanttView from "./components/GanttView";
-import type {Task, ReadingBook} from "./types";
-import { getGroups, getTasks } from "./tauri/api";
+import type { Task, ReadingBook } from "./types";
+import {
+  addTask,
+  completeTask,
+  createGroups,
+  deleteGroups,
+  deleteTask,
+  getGroups,
+  getReadingBooks,
+  getTasks,
+  renameGroups,
+  updateTask,
+} from "./tauri/api";
 
 // Reading Book interface for dashboard
-
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -38,60 +47,58 @@ function App() {
   async function refreshData() {
     const loadedTasks = await getTasks();
     const loadedGroups = await getGroups();
-    const loadedBooks = await invoke<ReadingBook[]>("get_reading_books");
+    const loadedBooks = await getReadingBooks();
     setTasks(loadedTasks);
     setGroups(loadedGroups);
     setReadingBooks(loadedBooks);
   }
 
-  const handleAddTask = async (desc: string, date: string, group: string, details: string, notificationMinutes?: number, startDate?: string) => {
-    const newTasks = await invoke<Task[]>("add_task", {
-      description: desc,
-      startDate: startDate || null,
-      dueDate: date,
-      group: group,
-      details: details,
-      notificationMinutes: notificationMinutes || null,
-      dependencies: null,
-    });
+  const handleAddTask = async (
+    desc: string,
+    date: string,
+    group: string,
+    details: string,
+    notificationMinutes?: number,
+    startDate?: string,
+  ) => {
+    const newTasks = await addTask(
+      desc,
+      startDate,
+      date,
+      group,
+      details,
+      notificationMinutes,
+      null,
+    );
     setTasks(newTasks);
   };
 
   const handleDeleteTask = async (id: number) => {
-    const newTasks = await invoke<Task[]>("delete_task", { id });
+    const newTasks = await deleteTask(id);
     setTasks(newTasks);
   };
 
   const handleCompleteTask = async (id: number) => {
-    const newTasks = await invoke<Task[]>("complete_task", { id });
+    const newTasks = await completeTask(id);
     setTasks(newTasks);
   };
 
   const handleUpdateTask = async (task: Task) => {
-    const newTasks = await invoke<Task[]>("update_task", {
-      id: task.id,
-      description: task.description,
-      startDate: task.start_date || null,
-      dueDate: task.due_date,
-      group: task.group,
-      details: task.details,
-      notificationMinutes: task.notification_minutes || null,
-      dependencies: task.dependencies || null,
-    });
+    const newTasks = await updateTask(task);
     setTasks(newTasks);
     setEditingTask(null);
   };
 
   const handleAddGroup = async (name: string) => {
-    const newGroups = await invoke<string[]>("create_group", { name });
+    const newGroups = await createGroups(name);
     setGroups(newGroups);
   };
 
   const handleDeleteGroup = async (name: string) => {
-    const newGroups = await invoke<string[]>("delete_group", { name });
+    const newGroups = await deleteGroups(name);
     setGroups(newGroups);
     // Also refresh tasks as some might have been updated (group cleared)
-    const loadedTasks = await invoke<Task[]>("get_tasks");
+    const loadedTasks = await getTasks();
     setTasks(loadedTasks);
 
     if (currentGroup === name) {
@@ -101,7 +108,7 @@ function App() {
 
   const handleRenameGroup = async (oldName: string, newName: string) => {
     try {
-      const res = await invoke<any>("rename_group", { oldName, newName });
+      const res = await renameGroups(oldName, newName);
       // The backend returns a tuple [groups, tasks]
       if (Array.isArray(res)) {
         const newGroups = res[0] as string[];
@@ -118,7 +125,13 @@ function App() {
   const handleSaveTask = async (task: Task) => {
     if (task.id === 0) {
       // New task
-      await handleAddTask(task.description, task.due_date, task.group, task.details, task.notification_minutes);
+      await handleAddTask(
+        task.description,
+        task.due_date,
+        task.group,
+        task.details,
+        task.notification_minutes,
+      );
     } else {
       // Update task
       await handleUpdateTask(task);
@@ -149,15 +162,17 @@ function App() {
             tasks={tasks}
             groups={groups}
             onEdit={setEditingTask}
-            onAddTask={(date) => setEditingTask({
-              id: 0,
-              description: "",
-              due_date: date,
-              group: "",
-              details: "",
-              completed: false,
-              subtasks: []
-            })}
+            onAddTask={(date) =>
+              setEditingTask({
+                id: 0,
+                description: "",
+                due_date: date,
+                group: "",
+                details: "",
+                completed: false,
+                subtasks: [],
+              })
+            }
           />
         ) : currentGroup === "__MEMOS__" ? (
           <MemoView />
