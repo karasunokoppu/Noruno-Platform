@@ -231,7 +231,16 @@ src/
 ---
 
 ## ビルド方法
+### 開発モード
 
+```bash
+npm tsc --noEmit
+
+npm prettier . --write
+
+```
+
+### 本番モード
 ```bash
 # 開発モード
 npm run tauri dev
