@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 export type ContextMenuItem = {
   label: string;
@@ -51,7 +52,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, items, onClose }) => {
     onClose();
   };
 
-  return (
+  const menuContent = (
     <>
       <div
         ref={ref}
@@ -77,6 +78,10 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, items, onClose }) => {
       <div className="context-menu-overlay" onClick={onClose} />
     </>
   );
+
+  // Use Portal to render at document.body level to avoid positioning issues
+  return createPortal(menuContent, document.body);
 };
 
 export default ContextMenu;
+

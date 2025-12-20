@@ -44,6 +44,13 @@ function App() {
     document.documentElement.className = `theme-${savedTheme}`;
   }, []);
 
+  useEffect(() => {
+    const handler = (e: MouseEvent) => e.preventDefault();
+    document.addEventListener("contextmenu", handler);
+    return () => document.removeEventListener("contextmenu", handler);
+  }, []);
+
+
   async function refreshData() {
     const loadedTasks = await getTasks();
     const loadedGroups = await getGroups();

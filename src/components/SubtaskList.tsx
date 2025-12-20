@@ -3,10 +3,20 @@
 import React, { useState } from "react";
 import { Task } from "../types";
 import { addSubtask, deleteSubtask, toggleSubtask, updateSubtask } from "../tauri/api";
+import ContextMenu, { ContextMenuItem } from "./ui/ContextMenu";
 
 interface SubtaskListProps {
   task: Task;
   onTasksUpdate: (tasks: Task[]) => void;
+}
+
+interface ContextMenuState {
+  visible: boolean;
+  x: number;
+  y: number;
+  subtaskId: number | null;
+  subtaskDescription: string;
+  subtaskCompleted: boolean;
 }
 
 const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
@@ -14,6 +24,35 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editDescription, setEditDescription] = useState("");
+  const [contextMenu, setContextMenu] = useState<ContextMenuState>({
+    visible: false,
+    x: 0,
+    y: 0,
+    subtaskId: null,
+    subtaskDescription: "",
+    subtaskCompleted: false,
+  });
+
+  const handleContextMenu = (
+    e: React.MouseEvent,
+    subtaskId: number,
+    description: string,
+    completed: boolean
+  ) => {
+    e.preventDefault();
+    setContextMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      subtaskId,
+      subtaskDescription: description,
+      subtaskCompleted: completed,
+    });
+  };
+
+  const closeContextMenu = () => {
+    setContextMenu((prev) => ({ ...prev, visible: false }));
+  };
 
   const handleAddSubtask = async () => {
     if (!newSubtask.trim()) return;
@@ -62,6 +101,25 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
     }
   };
 
+  const getContextMenuItems = (): ContextMenuItem[] => {
+    if (contextMenu.subtaskId === null) return [];
+
+    const subtaskId = contextMenu.subtaskId;
+    const description = contextMenu.subtaskDescription;
+
+    return [
+      {
+        label: "編集",
+        onClick: () => startEdit(subtaskId, description),
+      },
+      {
+        label: "削除",
+        onClick: () => handleDeleteSubtask(subtaskId),
+        danger: true,
+      },
+    ];
+  };
+
   const completedCount = task.subtasks?.filter((s) => s.completed).length || 0;
   const totalCount = task.subtasks?.length || 0;
 
@@ -87,6 +145,9 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
         <div
           key={subtask.id}
           className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-bg-hover transition-colors group"
+          onContextMenu={(e) =>
+            handleContextMenu(e, subtask.id, subtask.description, subtask.completed)
+          }
         >
           {editingId === subtask.id ? (
             // Edit mode
@@ -153,6 +214,16 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
         </div>
       ))}
 
+      {/* Context Menu */}
+      {contextMenu.visible && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          items={getContextMenuItems()}
+          onClose={closeContextMenu}
+        />
+      )}
+
       {/* Add subtask */}
       {isAdding ? (
         <div className="flex gap-2 mb-2 items-center mt-1">
@@ -197,4 +268,6 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
 };
 
 export default SubtaskList;
+
+
 
