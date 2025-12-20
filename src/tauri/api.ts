@@ -194,6 +194,25 @@ export async function deleteSubtask(
   }
 }
 
+export async function updateSubtask(
+  taskId: number,
+  subtaskId: number,
+  description: string,
+  completed: boolean,
+): Promise<Task[]> {
+  try {
+    return await invoke<Task[]>("update_subtask", {
+      taskId,
+      subtaskId,
+      description,
+      completed,
+    });
+  } catch (e) {
+    console.error("updateSubtask failed", e);
+    throw e;
+  }
+}
+
 //Calender
 export async function getCalendarEvents(): Promise<CalendarEvent[]> {
   try {
