@@ -58,14 +58,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     setIsAdding(false);
   };
 
-  const itemBaseClass =
-    "flex items-center gap-2.5 px-4 py-2.5 mb-1.5 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-bg-hover";
-  const activeClass = "bg-bg-active font-bold text-text-primary";
   const getItemClass = (isActive: boolean) =>
-    `${itemBaseClass} ${isActive ? activeClass : ""}`;
+    `sidebar-item ${isActive ? "active" : ""}`;
 
   return (
-    <div className="w-full">
+    <div className="sidebar-container">
       <div
         className={getItemClass(currentGroup === "__ALL__")}
         onClick={() => onSelectGroup("__ALL__")}
@@ -103,27 +100,27 @@ const Sidebar: React.FC<SidebarProps> = ({
         📚 Reading Memos
       </div>
 
-      <div className="my-2.5 border-b border-border-primary" />
+      <div className="sidebar-divider" />
 
-      <div className="px-2.5 mb-1.5 flex justify-between items-center">
-        <span className="text-[0.8em] text-text-tertiary">GROUPS</span>
+      <div className="sidebar-section-header">
+        <span className="sidebar-section-title">GROUPS</span>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="bg-transparent border-none text-text-tertiary cursor-pointer text-[1.2em] hover:text-text-primary"
+          className="sidebar-add-btn"
         >
           +
         </button>
       </div>
 
       {isAdding && (
-        <div className="px-2.5 mb-2.5 flex items-center">
+        <div className="sidebar-group-input-wrapper">
           <input
             ref={inputRef}
             type="text"
             value={newGroupName}
             onChange={(e) => setNewGroupName(e.target.value)}
             placeholder="New Group"
-            className="w-full mr-[5px] px-[5px] py-[2px] bg-bg-tertiary border-none text-text-primary rounded focus:ring-1 focus:ring-accent-primary outline-none"
+            className="sidebar-group-input"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleAddGroup();
               if (e.key === "Escape") handleCancelAdd();
@@ -131,7 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
           <button
             onClick={handleCancelAdd}
-            className="bg-transparent border-none text-text-tertiary cursor-pointer text-[1.2em] p-0 hover:text-danger"
+            className="sidebar-cancel-btn"
             title="Cancel"
           >
             ✕
@@ -142,23 +139,23 @@ const Sidebar: React.FC<SidebarProps> = ({
       {groups.map((group) => (
         <div
           key={group}
-          className={`${getItemClass(currentGroup === group)} justify-between group`}
+          className={`${getItemClass(currentGroup === group)} justify-between`}
           onClick={() => onSelectGroup(group)}
           onContextMenu={(e) => {
             e.preventDefault();
             setContextMenu({ x: e.clientX, y: e.clientY, group });
           }}
         >
-          <div className="flex items-center gap-1">
+          <div className="sidebar-group-content">
             <span>📁</span> {group}
           </div>
-          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="sidebar-group-actions">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 if (confirm(`Delete group "${group}"?`)) onDeleteGroup(group);
               }}
-              className="bg-transparent border-none text-text-disabled cursor-pointer text-[0.8em] px-[5px] hover:text-danger"
+              className="sidebar-delete-btn"
               title="Delete"
             >
               ✕
@@ -203,9 +200,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      <div className="my-2.5 border-b border-border-primary" />
+      <div className="sidebar-divider" />
 
-      <div className={`${getItemClass(false)} mb-2.5`} onClick={onOpenSettings}>
+      <div className={getItemClass(false)} onClick={onOpenSettings}>
         ⚙️ Settings
       </div>
     </div>

@@ -124,17 +124,17 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
   const totalCount = task.subtasks?.length || 0;
 
   return (
-    <div className="mt-2">
+    <div className="subtask-container">
       {/* Progress bar */}
       {totalCount > 0 && (
-        <div className="flex items-center gap-2 mb-2 text-xs text-text-secondary">
-          <div className="flex-1 h-1 bg-border-primary rounded overflow-hidden">
+        <div className="subtask-progress">
+          <div className="subtask-progress-bar">
             <div
-              className="h-full bg-accent-primary transition-all duration-300"
+              className="subtask-progress-fill"
               style={{ width: `${(completedCount / totalCount) * 100}%` }}
             />
           </div>
-          <span className="min-w-[40px]">
+          <span className="subtask-progress-text">
             {completedCount}/{totalCount}
           </span>
         </div>
@@ -144,7 +144,7 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
       {task.subtasks?.map((subtask) => (
         <div
           key={subtask.id}
-          className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-bg-hover transition-colors group"
+          className="subtask-item"
           onContextMenu={(e) =>
             handleContextMenu(e, subtask.id, subtask.description, subtask.completed)
           }
@@ -156,7 +156,7 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
                 type="text"
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
-                className="flex-1 p-1.5 text-sm rounded border border-accent-primary bg-bg-tertiary text-text-primary focus:outline-none"
+                className="subtask-edit-input"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleUpdateSubtask(subtask.id, subtask.completed);
@@ -168,13 +168,13 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
                 autoFocus
               />
               <button
-                className="px-2 py-1 text-xs rounded border border-border-primary bg-accent-primary text-white cursor-pointer hover:opacity-80"
+                className="subtask-btn primary"
                 onClick={() => handleUpdateSubtask(subtask.id, subtask.completed)}
               >
                 Save
               </button>
               <button
-                className="px-2 py-1 text-xs rounded border border-border-primary bg-bg-tertiary text-text-primary cursor-pointer hover:bg-bg-hover"
+                className="subtask-btn"
                 onClick={cancelEdit}
               >
                 Cancel
@@ -185,25 +185,25 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
             <>
               <input
                 type="checkbox"
-                className="appearance-none w-4 h-4 border border-gray-500 rounded bg-transparent checked:bg-accent-primary checked:border-accent-primary cursor-pointer transition-all duration-200 flex-shrink-0 bg-center bg-no-repeat bg-[length:12px_12px] checked:bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%2220%206%209%2017%204%2012%22%2F%3E%3C%2Fsvg%3E')]"
+                className="subtask-checkbox"
                 checked={subtask.completed}
                 onChange={() => handleToggleSubtask(subtask.id)}
               />
               <span
-                className={`flex-1 text-sm cursor-pointer ${subtask.completed ? "line-through text-text-tertiary" : ""}`}
+                className={`subtask-text ${subtask.completed ? "completed" : ""}`}
                 onDoubleClick={() => startEdit(subtask.id, subtask.description)}
               >
                 {subtask.description}
               </span>
               <button
-                className="opacity-0 bg-transparent border-none text-text-tertiary cursor-pointer text-xs px-1.5 transition-opacity group-hover:opacity-100 hover:text-accent-primary"
+                className="subtask-action-btn edit"
                 onClick={() => startEdit(subtask.id, subtask.description)}
                 title="Edit subtask"
               >
                 ✎
               </button>
               <button
-                className="opacity-0 bg-transparent border-none text-text-tertiary cursor-pointer text-xs px-1.5 transition-opacity group-hover:opacity-100 hover:text-danger"
+                className="subtask-action-btn delete"
                 onClick={() => handleDeleteSubtask(subtask.id)}
                 title="Delete subtask"
               >
@@ -226,13 +226,12 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
 
       {/* Add subtask */}
       {isAdding ? (
-        <div className="flex gap-2 mb-2 items-center mt-1">
+        <div className="subtask-add-form">
           <input
             type="text"
             value={newSubtask}
             onChange={(e) => setNewSubtask(e.target.value)}
             placeholder="Enter subtask..."
-            className="flex-1 p-1.5 text-sm rounded border border-border-primary bg-bg-tertiary text-text-primary focus:outline-none focus:border-accent-primary"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleAddSubtask();
               if (e.key === "Escape") {
@@ -243,13 +242,13 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
             autoFocus
           />
           <button
-            className="px-2 py-1 text-xs rounded border border-border-primary bg-bg-tertiary text-text-primary cursor-pointer hover:bg-bg-hover"
+            className="subtask-btn"
             onClick={handleAddSubtask}
           >
             Add
           </button>
           <button
-            className="px-2 py-1 text-xs rounded border border-border-primary bg-bg-tertiary text-text-primary cursor-pointer hover:bg-bg-hover"
+            className="subtask-btn"
             onClick={() => setIsAdding(false)}
           >
             Cancel
@@ -257,7 +256,7 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
         </div>
       ) : (
         <button
-          className="mt-1 text-xs text-accent-primary bg-transparent border-none cursor-pointer p-0 hover:underline flex items-center gap-1"
+          className="subtask-add-link"
           onClick={() => setIsAdding(true)}
         >
           + Add Subtask
@@ -268,6 +267,3 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
 };
 
 export default SubtaskList;
-
-
-

@@ -103,6 +103,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       <div
         className={`custom-dropdown-trigger ${isOpen ? "open" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
+        role="button"
       >
         <span className="custom-dropdown-value">{displayText}</span>
         <span className="custom-dropdown-arrow">{isOpen ? "▲" : "▼"}</span>
@@ -113,9 +114,8 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           {options.map((option, index) => (
             <div
               key={option.value}
-              className={`custom-dropdown-option ${
-                option.value === value ? "selected" : ""
-              } ${index === focusedIndex ? "focused" : ""}`}
+              className={`custom-dropdown-option ${option.value === value ? "selected" : ""
+                } ${index === focusedIndex ? "focused" : ""}`}
               onClick={() => handleOptionClick(option.value)}
               onMouseEnter={() => setFocusedIndex(index)}
             >

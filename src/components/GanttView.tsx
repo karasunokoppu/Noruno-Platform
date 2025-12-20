@@ -62,10 +62,10 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
       const progress =
         task.subtasks && task.subtasks.length > 0
           ? Math.round(
-              (task.subtasks.filter((s) => s.completed).length /
-                task.subtasks.length) *
-                100,
-            )
+            (task.subtasks.filter((s) => s.completed).length /
+              task.subtasks.length) *
+            100,
+          )
           : task.completed
             ? 100
             : 0;
@@ -110,15 +110,15 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
         if (m.subtasks && m.subtasks.length > 0)
           return Math.round(
             (m.subtasks.filter((s) => s.completed).length / m.subtasks.length) *
-              100,
+            100,
           );
         return m.completed ? 100 : 0;
       });
       const avgProgress =
         progValues.length > 0
           ? Math.round(
-              progValues.reduce((a, b) => a + b, 0) / progValues.length,
-            )
+            progValues.reduce((a, b) => a + b, 0) / progValues.length,
+          )
           : 0;
 
       newGanttTasks.push({
@@ -183,31 +183,31 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
   };
 
   return (
-    <div className="p-4 bg-bg-primary h-full overflow-auto gantt-theme">
-      <div className="mb-4 flex gap-4 items-center justify-between">
-        <div className="flex gap-2">
+    <div className="gantt-container gantt-theme">
+      <div className="gantt-toolbar">
+        <div className="gantt-view-buttons">
           <button
-            className={`px-3 py-1 rounded border border-border-primary text-text-primary ${viewMode === ViewMode.Day ? "bg-accent-primary" : "bg-bg-secondary"}`}
+            className={`gantt-view-btn ${viewMode === ViewMode.Day ? "active" : ""}`}
             onClick={() => setViewMode(ViewMode.Day)}
           >
             Day
           </button>
           <button
-            className={`px-3 py-1 rounded border border-border-primary text-text-primary ${viewMode === ViewMode.Week ? "bg-accent-primary" : "bg-bg-secondary"}`}
+            className={`gantt-view-btn ${viewMode === ViewMode.Week ? "active" : ""}`}
             onClick={() => setViewMode(ViewMode.Week)}
           >
             Week
           </button>
           <button
-            className={`px-3 py-1 rounded border border-border-primary text-text-primary ${viewMode === ViewMode.Month ? "bg-accent-primary" : "bg-bg-secondary"}`}
+            className={`gantt-view-btn ${viewMode === ViewMode.Month ? "active" : ""}`}
             onClick={() => setViewMode(ViewMode.Month)}
           >
             Month
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-text-secondary text-sm">Sort:</label>
+        <div className="gantt-sort-section">
+          <label className="gantt-sort-label">Sort:</label>
           <CustomDropdown
             value={sortOption}
             onChange={(v) => setSortOption(v as SortOption)}
@@ -247,7 +247,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
           }}
         />
       ) : (
-        <div className="text-text-secondary mt-10 text-center">
+        <div className="gantt-empty">
           No tasks to display
         </div>
       )}

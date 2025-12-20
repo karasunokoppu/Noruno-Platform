@@ -61,51 +61,38 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, existingGroups }) => {
     }
   };
 
-  const inputClass =
-    "p-2.5 rounded-md border border-border-primary bg-bg-tertiary text-text-primary text-sm focus:outline-none focus:border-accent-primary focus:bg-bg-secondary transition-colors";
-  const buttonClass =
-    "p-2.5 rounded-md border-none bg-accent-primary text-text-primary text-sm font-bold cursor-pointer transition-colors hover:bg-accent-hover";
-  const secondaryButtonClass = "bg-bg-active hover:bg-bg-hover";
-
-  // Small numeric input style
-  const numInputClass =
-    "w-[60px] p-1.5 text-center rounded border border-border-primary bg-bg-tertiary text-text-primary text-sm focus:outline-none focus:border-accent-primary";
-  const labelClass = "text-[10px] text-text-tertiary text-center block mt-0.5";
-
   return (
-    <div className="bg-bg-secondary p-4 rounded-xl shadow-[0_4px_6px_var(--shadow)] mb-5">
-      <div className="flex gap-2.5 mb-2.5">
+    <div className="task-input-container">
+      <div className="task-input-row">
         <input
           type="text"
           placeholder="Task description..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={handleKeyDown}
-          className={`${inputClass} flex-[2]`}
+          className="task-input"
           onFocus={() => setIsExpanded(true)}
         />
-        <button className={buttonClass} onClick={handleSubmit}>
+        <button className="task-add-btn" onClick={handleSubmit}>
           Add Task
         </button>
       </div>
 
-      <div
-        className={`flex flex-col gap-2.5 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-[500px] opacity-100 mt-2.5" : "max-h-0 opacity-0"}`}
-      >
-        <div className="flex gap-2.5">
-          <div className="flex-1 flex flex-col gap-1">
-            <label className="text-xs text-text-secondary">Start Date</label>
+      <div className={`task-expanded-section ${isExpanded ? "expanded" : "collapsed"}`}>
+        <div className="task-date-row">
+          <div className="task-date-col">
+            <label className="task-date-label">Start Date</label>
             <button
-              className={`${buttonClass} ${secondaryButtonClass} border border-border-primary w-full text-left`}
+              className="task-date-btn"
               onClick={() => setShowStartDatePicker(true)}
             >
               {startDate ? startDate.replace(/-/g, "/") : "Select Start Date"}
             </button>
           </div>
-          <div className="flex-1 flex flex-col gap-1">
-            <label className="text-xs text-text-secondary">Due Date</label>
+          <div className="task-date-col">
+            <label className="task-date-label">Due Date</label>
             <button
-              className={`${buttonClass} ${secondaryButtonClass} border border-border-primary w-full text-left`}
+              className="task-date-btn"
               onClick={() => setShowDatePicker(true)}
             >
               {date ? date.replace(/-/g, "/") : "Select Due Date"}
@@ -113,75 +100,81 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, existingGroups }) => {
           </div>
         </div>
 
-        <div className="flex gap-2.5">
-          <div className="flex-1">
-            <CustomDropdown
-              value={group}
-              onChange={setGroup}
-              options={[
-                { value: "", label: "No Group" },
-                ...existingGroups.map((g) => ({ value: g, label: g })),
-              ]}
-              style={{ width: "100%" }}
-            />
-          </div>
+        <div className="task-input-row">
+          <CustomDropdown
+            value={group}
+            onChange={setGroup}
+            options={[
+              { value: "", label: "No Group" },
+              ...existingGroups.map((g) => ({ value: g, label: g })),
+            ]}
+            style={{ width: "100%" }}
+          />
         </div>
 
-        <div className="flex gap-2.5">
+        <div className="task-input-row">
           <input
             type="text"
             placeholder="Details (optional)..."
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             onKeyDown={handleKeyDown}
-            className={`${inputClass} w-full`}
+            className="task-input-full"
           />
         </div>
 
-        <div className="flex gap-2.5 items-center">
-          <label className="text-sm text-text-secondary mr-2.5 min-w-fit">
-            Notify before:
-          </label>
-          <div className="flex gap-2 max-w-[400px]">
-            <div>
+        <div className="task-notify-row">
+          <label className="task-notify-label">Notify before:</label>
+          <div className="task-notify-inputs">
+            <div className="task-notify-field">
               <input
                 type="number"
                 placeholder="0"
                 value={notifyDays}
                 onChange={(e) => setNotifyDays(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={numInputClass}
+                className="task-notify-input"
                 min="0"
               />
-              <small className={labelClass}>Days</small>
+              <small className="task-notify-unit">Days</small>
             </div>
-            <div>
+            <div className="task-notify-field">
               <input
                 type="number"
                 placeholder="0"
                 value={notifyHours}
                 onChange={(e) => setNotifyHours(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={numInputClass}
+                className="task-notify-input"
                 min="0"
                 max="23"
               />
-              <small className={labelClass}>Hours</small>
+              <small className="task-notify-unit">Hours</small>
             </div>
-            <div>
+            <div className="task-notify-field">
               <input
                 type="number"
                 placeholder="0"
                 value={notifyMinutes}
                 onChange={(e) => setNotifyMinutes(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={numInputClass}
+                className="task-notify-input"
                 min="0"
                 max="59"
               />
-              <small className={labelClass}>Minutes</small>
+              <small className="task-notify-unit">Minutes</small>
             </div>
           </div>
+        </div>
+
+        <div className="task-input-row">
+          <button
+            className="task-cancel-btn"
+            onClick={() => setIsExpanded(false)}
+            type="button"
+          >
+            Cancel
+          </button>
         </div>
       </div>
 
