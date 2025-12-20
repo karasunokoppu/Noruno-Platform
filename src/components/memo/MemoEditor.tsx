@@ -9,6 +9,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Memo, Folder } from "../../types";
 import CustomDropdown from "../CustomDropdown";
+import { Link } from "react-router-dom";
 
 interface MemoEditorProps {
   memo: Memo | null;
@@ -237,6 +238,28 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
                     {children}
                   </code>
                 );
+              },
+              a: ({ href, children, ...props }) => {
+                if (href && (href.startsWith("http") || href.startsWith("https"))) {
+                  return(
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {children}
+                    </a>
+                  );
+                }
+                
+                //TODO [ここをロジックを修正]
+                if(href&& href.startsWith("#memo-")){
+                  return(
+                  <Link to="/">{children}</Link>
+                  );
+                }
+
+                return (<a href={href}>{children}</a>);
               },
             }}
           >

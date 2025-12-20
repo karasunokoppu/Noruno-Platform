@@ -149,7 +149,6 @@ CSS Variables (Custom Properties) ベースのテーマシステムを採用。
 
 ```
 root/
-├── tailwind.config.js   # Tailwind 設定
 ├── postcss.config.js    # PostCSS 設定
 ├── vite.config.ts       # Vite 設定
 ├── tsconfig.json        # TypeScript 設定
@@ -158,7 +157,6 @@ root/
 │   ├── src/
 │   │   ├── lib.rs           # エントリポイント、Tauri設定
 │   │   ├── main.rs          # メインエントリ
-│   │   ├── database.rs      # SQLite接続、マイグレーション
 │   │   ├── task.rs          # Task構造体
 │   │   ├── calendar.rs      # Calendar構造体
 │   │   ├── notification.rs  # 通知ロジック
@@ -166,28 +164,40 @@ root/
 │   │   ├── memo.rs          # メモ管理
 │   │   ├── reading_memo.rs  # 読書記録
 │   │   ├── settings.rs      # 設定管理
+│   │   ├── tests.rs         # ユニットテスト
 │   │   └── commands/        # Tauriコマンド
 │   │       ├── mod.rs
 │   │       ├── task_commands.rs
 │   │       ├── memo_commands.rs
-│   │       └── reading_commands.rs
-│   ├── migrations/          # SQLマイグレーションファイル
+│   │       ├── reading_commands.rs
+│   │       └── calendar_commands.rs
 │   └── Cargo.toml           # Rust 依存関係
 │
 src/
 ├── App.tsx              # メインアプリ
+├── main.tsx             # React エントリポイント
 ├── App.css              # グローバルスタイル
+├── setupTests.ts        # テスト設定
+├── vite-env.d.ts        # Vite型定義
+├── styles/              # スタイル定義
+│   └── theme.css        # テーマ変数
+├── types/               # TypeScript型定義
+├── utils/               # ユーティリティ関数
+├── tauri/               # Tauri APIラッパー
 ├── components/          # Reactコンポーネント
 │   ├── dashboard/       # ダッシュボード関連
 │   ├── memo/            # メモ機能関連
 │   ├── reading/         # 読書記録関連
 │   ├── settings/        # 設定画面など
 │   ├── sidebar/         # サイドバー
+│   ├── ui/              # 汎用UIコンポーネント (ContextMenuなど)
+│   ├── __tests__/       # コンポーネントテスト
 │   ├── TaskList.tsx
 │   ├── TaskRow.tsx
 │   ├── TaskInput.tsx
 │   ├── SubtaskList.tsx
 │   ├── EditDialog.tsx
+│   ├── GanttView.tsx
 │   ├── CalendarView.tsx
 │   ├── CalendarEventDialog.tsx
 │   ├── CustomDropdown.tsx

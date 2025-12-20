@@ -8,20 +8,7 @@ import {
   getCalendarEvents,
   updateCalendarEvents,
 } from "../tauri/api";
-
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  description: string;
-  start_datetime: string;
-  end_datetime?: string;
-  all_day: boolean;
-  color?: string;
-  recurrence_rule?: string;
-  reminder_minutes?: number;
-  created_at: string;
-  updated_at: string;
-}
+import { CalendarEvent } from "../types";
 
 interface CalendarViewProps {
   tasks: Task[];

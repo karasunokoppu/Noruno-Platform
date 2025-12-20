@@ -4,20 +4,13 @@ import React, { useState } from "react";
 import { Task } from "../types";
 import { addSubtask, deleteSubtask, toggleSubtask, updateSubtask } from "../tauri/api";
 import ContextMenu, { ContextMenuItem } from "./ui/ContextMenu";
+import { ContextMenuState } from "../types";
 
 interface SubtaskListProps {
   task: Task;
   onTasksUpdate: (tasks: Task[]) => void;
 }
 
-interface ContextMenuState {
-  visible: boolean;
-  x: number;
-  y: number;
-  subtaskId: number | null;
-  subtaskDescription: string;
-  subtaskCompleted: boolean;
-}
 
 const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
   const [newSubtask, setNewSubtask] = useState("");

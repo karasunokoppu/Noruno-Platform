@@ -1,16 +1,7 @@
 // 週間タスク完了チャートコンポーネント
 
 import React from "react";
-
-interface ChartData {
-  day: string;
-  count: number;
-  date: string;
-}
-
-interface TaskCompletionChartProps {
-  data: ChartData[];
-}
+import { TaskCompletionChartProps } from "../../types";
 
 const TaskCompletionChart: React.FC<TaskCompletionChartProps> = ({ data }) => {
   const maxCount = Math.max(...data.map((d) => d.count), 1);

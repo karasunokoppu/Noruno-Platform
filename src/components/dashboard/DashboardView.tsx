@@ -4,21 +4,8 @@ import React, { useMemo } from "react";
 import { Task } from "../../types";
 import StatsCard from "./StatsCard";
 import TaskCompletionChart from "./TaskCompletionChart";
+import { ReadingBook, DashboardViewProps } from "../../types";
 
-interface ReadingBook {
-  id: string;
-  title: string;
-  status: string;
-  reading_sessions: {
-    duration_minutes?: number;
-    pages_read: number;
-  }[];
-}
-
-interface DashboardViewProps {
-  tasks: Task[];
-  readingBooks: ReadingBook[];
-}
 
 const DashboardView: React.FC<DashboardViewProps> = ({
   tasks,

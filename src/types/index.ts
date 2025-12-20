@@ -13,6 +13,15 @@ export interface MinimalTask {
   group?: string | null;
 }
 
+export interface ContextMenuState {
+  visible: boolean;
+  x: number;
+  y: number;
+  subtaskId: number | null;
+  subtaskDescription: string;
+  subtaskCompleted: boolean;
+}
+
 //Task
 export interface Task {
   id: number;
@@ -32,6 +41,38 @@ export interface Subtask {
   description: string;
   completed: boolean;
 }
+
+//Dashboard
+export interface DashboardViewProps {
+  tasks: Task[];
+  readingBooks: ReadingBook[];
+}
+
+interface ChartData {
+  day: string;
+  count: number;
+  date: string;
+}
+
+export interface TaskCompletionChartProps {
+  data: ChartData[];
+}
+
+//Calender
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  description: string;
+  start_datetime: string;
+  end_datetime?: string;
+  all_day: boolean;
+  color?: string;
+  recurrence_rule?: string;
+  reminder_minutes?: number;
+  created_at: string;
+  updated_at: string;
+}
+
 
 //Memos
 export interface Memo {
