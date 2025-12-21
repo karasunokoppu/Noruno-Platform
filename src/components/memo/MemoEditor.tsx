@@ -253,11 +253,11 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
                 }
                 
                 //TODO [ここをロジックを修正]
-                if(href&& href.startsWith("#memo-")){
-                  return(
-                  <Link to="/">{children}</Link>
-                  );
-                }
+                // if(href&& href.startsWith("#memo-")){
+                //   return(
+                //   <Link to="/">{children}</Link>
+                //   );
+                // }
 
                 return (<a href={href}>{children}</a>);
               },
@@ -271,7 +271,7 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
       {backlinks.length > 0 && (
         <div className="memo-backlinks">
           <h4>Linked from:</h4>
-          <ul>
+          <ul className="memo-backlinks-list">
             {backlinks.map((link) => (
               <li key={link.id}>{link.title}</li>
             ))}

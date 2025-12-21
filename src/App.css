@@ -677,7 +677,7 @@ button.danger:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 2px;
   border-radius: 6px;
   border: 1px solid var(--border-primary);
   background-color: var(--bg-tertiary);
@@ -1276,7 +1276,7 @@ button.danger:hover {
 }
 
 .memo-editor-header {
-  padding: 15px 20px;
+  padding: 5px 20px;
   border-bottom: 1px solid var(--border-primary);
   display: flex;
   justify-content: space-between;
@@ -1309,7 +1309,7 @@ button.danger:hover {
 }
 
 .memo-editor-meta {
-  padding: 10px 20px;
+  padding: 5px 20px;
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-primary);
   display: flex;
@@ -1511,9 +1511,16 @@ button.danger:hover {
 }
 
 .memo-backlinks {
-  padding: 15px 20px;
+  padding: 5px 10px;
   border-top: 1px solid var(--border-primary);
   background-color: var(--bg-secondary);
+}
+.memo-backlinks-list {
+  height: 50px;
+  min-width: 50px;
+  display: flex;
+  flex-direction: column;
+  flex-flow: column wrap;
 }
 
 .memo-backlinks h4 {
