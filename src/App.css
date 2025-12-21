@@ -1992,6 +1992,7 @@ button.danger:hover {
   border: 1px solid var(--border-primary);
   border-radius: 8px;
   padding: 12px;
+  text-align: left;
 }
 
 .note-card-header {

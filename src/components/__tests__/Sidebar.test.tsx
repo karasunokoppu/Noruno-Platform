@@ -54,9 +54,9 @@ describe("Sidebar", () => {
 
     const groups = ["Work", "Personal"];
 
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
+    // beforeEach(() => {
+    //     vi.clearAllMocks();
+    // });
 
     it("renders navigation items", () => {
         render(

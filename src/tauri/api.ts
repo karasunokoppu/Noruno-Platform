@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { MailSettings, Task, ReadingBook, ReadingStatus } from "../types";
-import { CalendarEvent } from "../components/CalendarView";
+import type { CalendarEvent } from "../types";
 
 //Mail
 export async function getMailSettings(): Promise<MailSettings> {
@@ -212,6 +212,26 @@ export async function updateSubtask(
     throw e;
   }
 }
+
+//Task => Folder
+export async function getFolders(): Promise<any[]> {
+  try {
+    return await invoke<any[]>("get_folders");
+  } catch (e) {
+    console.error("getFolders failed", e);
+    throw e;
+  }
+}
+
+export async function deleteFolder(id: string): Promise<any[]> {
+  try {
+    return await invoke<any[]>("delete_folder", { id });
+  } catch (e) {
+    console.error("deleteFolder failed", e);
+    throw e;
+  }
+}   
+
 
 //Calender
 export async function getCalendarEvents(): Promise<CalendarEvent[]> {

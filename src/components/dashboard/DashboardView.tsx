@@ -1,10 +1,9 @@
 // 統計ダッシュボードコンポーネント
 
 import React, { useMemo } from "react";
-import { Task } from "../../types";
 import StatsCard from "./StatsCard";
 import TaskCompletionChart from "./TaskCompletionChart";
-import { ReadingBook, DashboardViewProps } from "../../types";
+import { DashboardViewProps } from "../../types";
 
 
 const DashboardView: React.FC<DashboardViewProps> = ({

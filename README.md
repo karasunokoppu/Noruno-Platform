@@ -1,18 +1,16 @@
-# Noruno Platform
+# Noruno Platform ![App Icon](./src-tauri/icons/32x32.png)
 
-**Noruno Platform** は、Tauri + React + TypeScript で構築された、モダンで高速なオールインワン生産性向上デスクトップアプリケーションです。
+**Noruno Platform** は、Tauri, React, TypesSriptの学習を目的としたプロジェクトです。Tauri + React + TypeScriptで構築された、モダンで高速なオールインワン生産性向上デスクトップアプリケーションを制作する試みです。
 
-タスク管理、Markdownメモ、読書記録、カレンダーを一元管理し、あなたの日常をサポートします。
-
-![App Icon](./app-icon.png)
 
 ## ✨ 主な機能
 
 - **📋 タスク管理**: サブタスク、期限設定、通知機能付きの強力なTODOリスト。
-- **📝 高機能メモ**: フォルダ管理、タグ付け、全文検索が可能なMarkdownエディタ。
+- **📝 高機能メモ**: フォルダー管理、タグ付け、全文検索が可能なMarkdownエディター。
 - **📚 読書記録**: ステータス管理、読書ノート、進捗可視化機能を備えたブックログ。
 - **📅 カレンダー**: タスク期限とイベントを月表示で直感的に把握。
 - **📊 ダッシュボード**: 活動状況をひと目で確認できる分析画面。
+- **💹 ガントチャート**: タスクベースで管理するガントチャート。
 - **🎨 テーマ機能**: 気分に合わせて選べる豊富なカラーテーマ（Light, Dark, Tokyo Night, etc.）。
 
 ## 📖 ドキュメント
@@ -54,4 +52,4 @@ npm run tauri build
 
 ## 📂 データ保存場所
 
-アプリケーションの設定やデータは、OS標準のデータディレクトリ内の `noruno_platform` フォルダにあるJSONファイル (`tasks.json`, `memos.json` など) に保存されます。
+アプリケーションの設定やデータは、OS標準のデータディレクトリ内の `noruno_platform` フォルダーにあるJSONファイル (`tasks.json`, `memos.json` など) に保存されます。

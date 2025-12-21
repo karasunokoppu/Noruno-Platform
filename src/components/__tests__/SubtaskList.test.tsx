@@ -42,9 +42,9 @@ describe("SubtaskList", () => {
         subtasks: [],
     };
 
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
+    // beforeEach(() => {
+    //     vi.clearAllMocks();
+    // });
 
     it("renders subtasks correctly", () => {
         render(

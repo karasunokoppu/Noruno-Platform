@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CustomDatePicker from "./CustomDatePicker";
-import { CalendarEvent } from "./CalendarView";
+import { CalendarEvent } from "../types";
 
 interface CalendarEventDialogProps {
   event?: CalendarEvent; // If passed, editing mode

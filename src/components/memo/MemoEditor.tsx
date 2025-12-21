@@ -9,7 +9,6 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Memo, Folder } from "../../types";
 import CustomDropdown from "../CustomDropdown";
-import { Link } from "react-router-dom";
 
 interface MemoEditorProps {
   memo: Memo | null;
@@ -246,6 +245,7 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      {...props}
                     >
                       {children}
                     </a>
