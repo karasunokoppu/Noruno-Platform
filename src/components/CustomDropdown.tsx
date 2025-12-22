@@ -114,8 +114,9 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           {options.map((option, index) => (
             <div
               key={option.value}
-              className={`custom-dropdown-option ${option.value === value ? "selected" : ""
-                } ${index === focusedIndex ? "focused" : ""}`}
+              className={`custom-dropdown-option ${
+                option.value === value ? "selected" : ""
+              } ${index === focusedIndex ? "focused" : ""}`}
               onClick={() => handleOptionClick(option.value)}
               onMouseEnter={() => setFocusedIndex(index)}
             >

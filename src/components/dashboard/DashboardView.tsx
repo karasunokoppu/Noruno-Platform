@@ -5,7 +5,6 @@ import StatsCard from "./StatsCard";
 import TaskCompletionChart from "./TaskCompletionChart";
 import { DashboardViewProps } from "../../types";
 
-
 const DashboardView: React.FC<DashboardViewProps> = ({
   tasks,
   readingBooks,

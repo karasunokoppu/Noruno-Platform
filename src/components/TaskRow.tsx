@@ -46,9 +46,7 @@ const TaskRow: React.FC<TaskRowProps> = ({
                 {completedSubtasks}/{totalSubtasks}
               </span>
             )}
-            <span className="task-expand-icon">
-              {expanded ? "▲" : "▼"}
-            </span>
+            <span className="task-expand-icon">{expanded ? "▲" : "▼"}</span>
           </div>
           {(task.due_date || task.group) && (
             <div className="task-meta">
@@ -63,10 +61,7 @@ const TaskRow: React.FC<TaskRowProps> = ({
           <button className="task-edit-btn" onClick={() => onEdit(task)}>
             Edit
           </button>
-          <button
-            className="task-delete-btn"
-            onClick={() => onDelete(task.id)}
-          >
+          <button className="task-delete-btn" onClick={() => onDelete(task.id)}>
             Delete
           </button>
         </div>

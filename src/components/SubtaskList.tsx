@@ -2,7 +2,12 @@
 
 import React, { useState } from "react";
 import { Task } from "../types";
-import { addSubtask, deleteSubtask, toggleSubtask, updateSubtask } from "../tauri/api";
+import {
+  addSubtask,
+  deleteSubtask,
+  toggleSubtask,
+  updateSubtask,
+} from "../tauri/task_api";
 import ContextMenu, { ContextMenuItem } from "./ui/ContextMenu";
 import { ContextMenuState } from "../types";
 
@@ -10,7 +15,6 @@ interface SubtaskListProps {
   task: Task;
   onTasksUpdate: (tasks: Task[]) => void;
 }
-
 
 const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
   const [newSubtask, setNewSubtask] = useState("");
@@ -30,7 +34,7 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
     e: React.MouseEvent,
     subtaskId: number,
     description: string,
-    completed: boolean
+    completed: boolean,
   ) => {
     e.preventDefault();
     setContextMenu({
@@ -85,7 +89,7 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
         task.id,
         subtaskId,
         editDescription.trim(),
-        completed
+        completed,
       );
       onTasksUpdate(newTasks);
       cancelEdit();
@@ -139,7 +143,12 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
           key={subtask.id}
           className="subtask-item"
           onContextMenu={(e) =>
-            handleContextMenu(e, subtask.id, subtask.description, subtask.completed)
+            handleContextMenu(
+              e,
+              subtask.id,
+              subtask.description,
+              subtask.completed,
+            )
           }
         >
           {editingId === subtask.id ? (
@@ -162,14 +171,13 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
               />
               <button
                 className="subtask-btn primary"
-                onClick={() => handleUpdateSubtask(subtask.id, subtask.completed)}
+                onClick={() =>
+                  handleUpdateSubtask(subtask.id, subtask.completed)
+                }
               >
                 Save
               </button>
-              <button
-                className="subtask-btn"
-                onClick={cancelEdit}
-              >
+              <button className="subtask-btn" onClick={cancelEdit}>
                 Cancel
               </button>
             </>
@@ -234,24 +242,15 @@ const SubtaskList: React.FC<SubtaskListProps> = ({ task, onTasksUpdate }) => {
             }}
             autoFocus
           />
-          <button
-            className="subtask-btn"
-            onClick={handleAddSubtask}
-          >
+          <button className="subtask-btn" onClick={handleAddSubtask}>
             Add
           </button>
-          <button
-            className="subtask-btn"
-            onClick={() => setIsAdding(false)}
-          >
+          <button className="subtask-btn" onClick={() => setIsAdding(false)}>
             Cancel
           </button>
         </div>
       ) : (
-        <button
-          className="subtask-add-link"
-          onClick={() => setIsAdding(true)}
-        >
+        <button className="subtask-add-link" onClick={() => setIsAdding(true)}>
           + Add Subtask
         </button>
       )}

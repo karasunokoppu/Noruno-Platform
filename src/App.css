@@ -432,7 +432,9 @@ body {
   margin-bottom: 10px;
   padding: 16px;
   border: 1px solid var(--border-primary);
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
 }
 
 .task-row:hover {
@@ -1424,14 +1426,24 @@ button.danger:hover {
   color: var(--text-primary);
 }
 
-.memo-preview-pane a {
-  color: var(--accent-primary);
+.memo-preview-pane a{
+  color: rgb(69, 115, 241);
   text-decoration: none;
 }
 
 .memo-preview-pane a:hover {
   text-decoration: underline;
 }
+
+.memo-preview-pane button {
+  color: rgb(30, 152, 168);
+  background: none;
+  border: 1px solid var(--text-primary);
+  text-decoration: none;
+  padding: 2px;
+}
+/* style={{ border: "none", background: "none", color: "#4c2ef7ff", textDecoration: "underline", padding: 0, }} */
+
 
 .memo-preview-pane blockquote {
   border-left: 4px solid var(--accent-primary);
@@ -2766,9 +2778,11 @@ button.danger:hover {
 }
 
 .chart-bar {
-  background: linear-gradient(180deg,
-      var(--accent-primary),
-      var(--accent-hover));
+  background: linear-gradient(
+    180deg,
+    var(--accent-primary),
+    var(--accent-hover)
+  );
   border-radius: 4px 4px 0 0;
   min-height: 4px;
   display: flex;

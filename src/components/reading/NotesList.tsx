@@ -6,7 +6,7 @@ import {
   addReadingNote,
   deleteReadingNote,
   updateReadingNote,
-} from "../../tauri/api";
+} from "../../tauri/reading_api";
 
 interface NotesListProps {
   book: ReadingBook;

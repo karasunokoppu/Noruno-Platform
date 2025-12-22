@@ -73,7 +73,6 @@ export interface CalendarEvent {
   updated_at: string;
 }
 
-
 //Memos
 export interface Memo {
   id: string;

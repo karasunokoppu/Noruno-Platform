@@ -62,10 +62,10 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
       const progress =
         task.subtasks && task.subtasks.length > 0
           ? Math.round(
-            (task.subtasks.filter((s) => s.completed).length /
-              task.subtasks.length) *
-            100,
-          )
+              (task.subtasks.filter((s) => s.completed).length /
+                task.subtasks.length) *
+                100,
+            )
           : task.completed
             ? 100
             : 0;
@@ -110,15 +110,15 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
         if (m.subtasks && m.subtasks.length > 0)
           return Math.round(
             (m.subtasks.filter((s) => s.completed).length / m.subtasks.length) *
-            100,
+              100,
           );
         return m.completed ? 100 : 0;
       });
       const avgProgress =
         progValues.length > 0
           ? Math.round(
-            progValues.reduce((a, b) => a + b, 0) / progValues.length,
-          )
+              progValues.reduce((a, b) => a + b, 0) / progValues.length,
+            )
           : 0;
 
       newGanttTasks.push({
@@ -247,9 +247,7 @@ const GanttView: React.FC<GanttViewProps> = ({ tasks, onTaskUpdate }) => {
           }}
         />
       ) : (
-        <div className="gantt-empty">
-          No tasks to display
-        </div>
+        <div className="gantt-empty">No tasks to display</div>
       )}
     </div>
   );

@@ -78,7 +78,9 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, existingGroups }) => {
         </button>
       </div>
 
-      <div className={`task-expanded-section ${isExpanded ? "expanded" : "collapsed"}`}>
+      <div
+        className={`task-expanded-section ${isExpanded ? "expanded" : "collapsed"}`}
+      >
         <div className="task-date-row">
           <div className="task-date-col">
             <label className="task-date-label">Start Date</label>

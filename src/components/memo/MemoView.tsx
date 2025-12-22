@@ -8,6 +8,13 @@ import FolderTree from "./FolderTree";
 import MemoList from "./MemoList";
 import MemoEditor from "./MemoEditor";
 import type { Memo, Folder } from "../../types";
+import {
+  createMemo,
+  deleteMemo,
+  getMemos,
+  updateMemo,
+} from "../../tauri/memo_api";
+import { getFolders } from "../../tauri/task_api";
 
 const MemoView: React.FC = () => {
   const [memos, setMemos] = useState<Memo[]>([]);
@@ -23,7 +30,7 @@ const MemoView: React.FC = () => {
 
   const loadMemos = async () => {
     try {
-      const loaded = await invoke<Memo[]>("get_memos");
+      const loaded = await getMemos();
       setMemos(loaded);
     } catch (error) {
       console.error("Failed to load memos:", error);
@@ -32,7 +39,7 @@ const MemoView: React.FC = () => {
 
   const loadFolders = async () => {
     try {
-      const loaded = await invoke<Folder[]>("get_folders");
+      const loaded = await getFolders();
       setFolders(loaded);
     } catch (error) {
       console.error("Failed to load folders:", error);
@@ -41,12 +48,7 @@ const MemoView: React.FC = () => {
 
   const handleCreateMemo = async () => {
     try {
-      const newMemos = await invoke<Memo[]>("create_memo", {
-        title: "Untitled",
-        content: "",
-        folderId: selectedFolder,
-        tags: [],
-      });
+      const newMemos = await createMemo("Untitled", "", selectedFolder, []);
       setMemos(newMemos);
       if (newMemos.length > 0) {
         setSelectedMemo(newMemos[newMemos.length - 1]);
@@ -58,13 +60,13 @@ const MemoView: React.FC = () => {
 
   const handleSaveMemo = async (memo: Memo) => {
     try {
-      const updated = await invoke<Memo[]>("update_memo", {
-        id: memo.id,
-        title: memo.title,
-        content: memo.content,
-        folderId: memo.folder_id,
-        tags: memo.tags,
-      });
+      const updated = await updateMemo(
+        memo.id,
+        memo.title,
+        memo.content,
+        memo.folder_id,
+        memo.tags,
+      );
       setMemos(updated);
       setSelectedMemo(memo);
     } catch (error) {
@@ -74,7 +76,7 @@ const MemoView: React.FC = () => {
 
   const handleDeleteMemo = async (id: string) => {
     try {
-      const updated = await invoke<Memo[]>("delete_memo", { id });
+      const updated = await deleteMemo(id);
       setMemos(updated);
       if (selectedMemo?.id === id) {
         setSelectedMemo(null);
@@ -150,11 +152,13 @@ const MemoView: React.FC = () => {
         />
       </div>
       <MemoEditor
+        memos={filteredMemos}
         memo={selectedMemo}
         folders={folders}
         allMemos={memos}
         onSave={handleSaveMemo}
         onDelete={handleDeleteMemo}
+        onSelectMemo={setSelectedMemo}
       />
     </div>
   );

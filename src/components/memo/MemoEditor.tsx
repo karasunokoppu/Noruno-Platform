@@ -11,17 +11,21 @@ import { Memo, Folder } from "../../types";
 import CustomDropdown from "../CustomDropdown";
 
 interface MemoEditorProps {
+  memos: Memo[];
   memo: Memo | null;
   folders: Folder[];
   allMemos: Memo[];
+  onSelectMemo: (memo: Memo) => void;
   onSave: (memo: Memo) => void;
   onDelete: (id: string) => void;
 }
 
 const MemoEditor: React.FC<MemoEditorProps> = ({
+  memos,
   memo,
   folders,
   allMemos,
+  onSelectMemo,
   onSave,
   onDelete,
 }) => {
@@ -239,8 +243,11 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
                 );
               },
               a: ({ href, children, ...props }) => {
-                if (href && (href.startsWith("http") || href.startsWith("https"))) {
-                  return(
+                if (
+                  href &&
+                  (href.startsWith("http") || href.startsWith("https"))
+                ) {
+                  return (
                     <a
                       href={href}
                       target="_blank"
@@ -251,15 +258,15 @@ const MemoEditor: React.FC<MemoEditorProps> = ({
                     </a>
                   );
                 }
-                
-                //TODO [ここをロジックを修正]
-                // if(href&& href.startsWith("#memo-")){
-                //   return(
-                //   <Link to="/">{children}</Link>
-                //   );
-                // }
 
-                return (<a href={href}>{children}</a>);
+                //TODO [ここをロジックを修正]
+                if(href&& href.startsWith("#memo-")){
+                  return(
+                  <button onClick={() => onSelectMemo(memos.find(memo => memo.id === href.substring(6))!)}>{children}</button>
+                  );
+                }
+
+                return <a href={href}>{children}</a>;
               },
             }}
           >

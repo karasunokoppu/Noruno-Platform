@@ -8,7 +8,7 @@ import {
   deleteReadingBooks,
   getReadingBooks,
   updateReadingBooks,
-} from "../../tauri/api";
+} from "../../tauri/reading_api";
 
 function ReadingMemoView() {
   const [books, setBooks] = useState<ReadingBook[]>([]);

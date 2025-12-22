@@ -7,7 +7,7 @@ import {
   deleteCalendarEvents,
   getCalendarEvents,
   updateCalendarEvents,
-} from "../tauri/api";
+} from "../tauri/calender_api";
 import { CalendarEvent } from "../types";
 
 interface CalendarViewProps {

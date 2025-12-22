@@ -19,11 +19,11 @@ import {
   deleteGroups,
   deleteTask,
   getGroups,
-  getReadingBooks,
   getTasks,
   renameGroups,
   updateTask,
-} from "./tauri/api";
+} from "./tauri/task_api";
+import { getReadingBooks } from "./tauri/reading_api";
 
 // Reading Book interface for dashboard
 
@@ -49,7 +49,6 @@ function App() {
     document.addEventListener("contextmenu", handler);
     return () => document.removeEventListener("contextmenu", handler);
   }, []);
-
 
   async function refreshData() {
     const loadedTasks = await getTasks();

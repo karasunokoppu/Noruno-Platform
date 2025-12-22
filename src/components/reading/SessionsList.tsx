@@ -7,7 +7,7 @@ import {
   addReadingSession,
   deleteReadingSession,
   updateReadingSession,
-} from "../../tauri/api";
+} from "../../tauri/reading_api";
 
 interface SessionsListProps {
   book: ReadingBook;
