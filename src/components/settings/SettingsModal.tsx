@@ -314,7 +314,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             marginTop: "8px",
             textAlign: "right",
             color: "var(--muted)",
-            fontSize: "12px",
+            fontSize: "13px",
           }}
         >
           Version: {appVersion}
